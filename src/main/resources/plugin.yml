@@ -1,0 +1,5 @@
+main: me.rootdeibis.orewards.ORewardsMain
+name: ORewards-Bukkit
+version: 1.0
+api-version: <1.13
+author: "Deibis A - Alias rootDeibis"
