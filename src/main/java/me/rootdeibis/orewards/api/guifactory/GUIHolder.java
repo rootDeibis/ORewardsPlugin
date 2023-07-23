@@ -2,6 +2,7 @@ package me.rootdeibis.orewards.api.guifactory;
 
 import me.rootdeibis.orewards.ORewardsMain;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -9,6 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GUIHolder implements InventoryHolder {
 
@@ -27,6 +29,9 @@ public class GUIHolder implements InventoryHolder {
         this.task.cancel();
     }
 
+    public BukkitTask getTask() {
+        return task;
+    }
 
     public void addButtons(GUIButton... btn) {
         this.buttons.addAll(Arrays.asList(btn));
@@ -37,9 +42,7 @@ public class GUIHolder implements InventoryHolder {
     }
 
     public void build() {
-        for (GUIButton button : this.buttons) {
-            this.inventory.setItem(button.getBtnSlot(), button.getItemStack());
-        }
+        this.getButtons().forEach(btn -> this.inventory.setItem(btn.getBtnSlot(), btn.getItemStack()));
     }
 
 
@@ -57,14 +60,9 @@ public class GUIHolder implements InventoryHolder {
     }
 
     public static List<GUIHolder> getOpenedHolders() {
-        List<GUIHolder> opened_holders = new ArrayList<>();
-
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUIHolder) {
-                opened_holders.add((GUIHolder) player.getOpenInventory().getTopInventory().getHolder());
-            }
-        }
-
-        return opened_holders;
+        return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getOpenInventory)
+                .filter(i -> i.getTopInventory() != null && i.getTopInventory() instanceof GUIHolder)
+                .map(i -> (GUIHolder) i.getTopInventory())
+                .collect(Collectors.toList());
     }
 }

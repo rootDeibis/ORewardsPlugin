@@ -1,9 +1,9 @@
 package me.rootdeibis.orewards.api.guifactory;
 
 
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.Bukkit;
 
-public class GuiTaskUpdater extends BukkitRunnable {
+public class GuiTaskUpdater implements Runnable {
 
     private final GUIHolder holder;
 
@@ -17,7 +17,9 @@ public class GuiTaskUpdater extends BukkitRunnable {
 
        if(holder.getInventory().getViewers().size() == 0) {
 
-           this.cancel();
+           if(Bukkit.getScheduler().isCurrentlyRunning(this.holder.getTask().getTaskId())) {
+               this.holder.cancelTask();
+           }
 
        } else {
 
