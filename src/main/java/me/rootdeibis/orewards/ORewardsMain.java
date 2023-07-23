@@ -17,7 +17,7 @@ public class ORewardsMain extends JavaPlugin {
         instance = this;
 
         this.registerListeners();
-        this.runTasks();
+
 
 
 
@@ -32,9 +32,6 @@ public class ORewardsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GUIFactoryListener(), this);
     }
 
-    private void runTasks() {
-        Bukkit.getScheduler().runTaskTimer(this, new GuiTaskUpdater(), 20L, 20L);
-    }
 
     private void secureDisable() {
         for (GUIHolder openedHolder : GUIHolder.getOpenedHolders()) {

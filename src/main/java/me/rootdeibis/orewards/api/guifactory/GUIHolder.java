@@ -1,9 +1,11 @@
 package me.rootdeibis.orewards.api.guifactory;
 
+import me.rootdeibis.orewards.ORewardsMain;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -12,11 +14,18 @@ public class GUIHolder implements InventoryHolder {
 
     private final Inventory inventory;
     private final Set<GUIButton> buttons = new HashSet<>();
+
+    private final BukkitTask task;
     public GUIHolder(int rows, String title) {
         this.inventory = Bukkit.createInventory(this, rows * 8, title);
+
+        this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
     }
 
 
+    public void cancelTask() {
+        this.task.cancel();
+    }
 
 
     public void addButtons(GUIButton... btn) {

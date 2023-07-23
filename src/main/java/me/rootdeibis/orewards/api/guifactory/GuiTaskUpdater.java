@@ -1,31 +1,29 @@
 package me.rootdeibis.orewards.api.guifactory;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
-public class GuiTaskUpdater implements Runnable {
+import org.bukkit.scheduler.BukkitRunnable;
 
-    public GuiTaskUpdater() {
+public class GuiTaskUpdater extends BukkitRunnable {
 
+    private final GUIHolder holder;
+
+    public GuiTaskUpdater(GUIHolder holder) {
+        this.holder = holder;
     }
+
 
     @Override
     public void run() {
 
-        if(Bukkit.getOnlinePlayers().size() > 0) return;
+       if(holder.getInventory().getViewers().size() == 0) {
 
-        for(Player player : Bukkit.getOnlinePlayers()) {
+           this.cancel();
 
-            if(player.getOpenInventory().getTopInventory().getHolder() instanceof GUIHolder) {
+       } else {
 
-                GUIHolder holder = (GUIHolder) player.getOpenInventory().getTopInventory();
+           holder.build();
 
-                holder.build();
-
-            }
-
-
-        }
+       }
 
 
     }
