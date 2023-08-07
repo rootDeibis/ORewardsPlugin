@@ -1,0 +1,35 @@
+# #######  ######
+# #     #  #     #  ######  #    #    ##    #####   #####    ####
+# #     #  #     #  #       #    #   #  #   #    #  #    #  #
+# #     #  ######   #####   #    #  #    #  #    #  #    #   ####
+# #     #  #   #    #       # ## #  ######  #####   #    #       #
+# #     #  #    #   #       ##  ##  #    #  #   #   #    #  #    #
+# #######  #     #  ######  #    #  #    #  #    #  #####    ####
+#                Author: github.com/rootDeibis
+#                GUI Configuration by: MattyHD0 | https://www.spigotmc.org/members/mattyhd0.452880/
+#
+# ------ OPTIONS -----
+Options:
+  # <MysqlConnection>
+  # If this option is not activated, the SQL database will be used
+  MysqlConnection:
+    Enabled: false
+    Data:
+      hostname: "localhost"
+      port: "3306"
+      user: "root"
+      password: ""
+      databaseName: "orewards_data"
+  SQLConnection:
+    FileName: "ORewardsSQLData.sql"
+Messages:
+  WelcomeRewardAvailable:
+    Delay: 2 # Seconds
+    Enabled: true
+    Availables: "Hey <player_name>, you have available <rewards_availables> rewards"
+    NoAvailable: "&cOh no, no rewards availables"
+  PlaceholderAPI:
+    # Placeholder > %oreward_available_[name]%
+    getRewardIsAvailable:
+      Available: "&a<reward_displayname> available!"
+      NoAvailable: "&c<reward_displayname> no available!"

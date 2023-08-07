@@ -1,9 +1,12 @@
 package me.rootdeibis.orewards.api.guifactory;
 
 import me.rootdeibis.orewards.ORewardsMain;
+import me.rootdeibis.orewards.utils.AdvetureUtils;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
@@ -14,16 +17,32 @@ import java.util.stream.Collectors;
 
 public class GUIHolder implements InventoryHolder {
 
-    private final Inventory inventory;
+    private Inventory inventory;
     private final Set<GUIButton> buttons = new HashSet<>();
+
+    private String title = "GUIHolder Inventory";
+    private int rows = 5;
 
     private final BukkitTask task;
     public GUIHolder(int rows, String title) {
-        this.inventory = Bukkit.createInventory(this, rows * 8, title);
+        this.title = title;
+        this.rows = rows;
 
         this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
     }
 
+    public GUIHolder() {
+        this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
 
     public void cancelTask() {
         this.task.cancel();
@@ -42,7 +61,14 @@ public class GUIHolder implements InventoryHolder {
     }
 
     public void build() {
-        this.getButtons().forEach(btn -> this.inventory.setItem(btn.getBtnSlot(), btn.getItemStack()));
+        if(this.inventory == null) {
+            this.inventory = Bukkit.createInventory(this, rows * 9, AdvetureUtils.translate(this.title));
+        }
+
+        this.getButtons().forEach(btn -> {
+            btn.build();
+            this.inventory.setItem(btn.getBtnSlot(), btn.getItemStack());
+        });
     }
 
 
@@ -56,6 +82,7 @@ public class GUIHolder implements InventoryHolder {
 
     @Override
     public Inventory getInventory() {
+
         return this.inventory;
     }
 

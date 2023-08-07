@@ -23,7 +23,7 @@ public class GuiTaskUpdater implements Runnable {
 
        } else {
 
-           holder.build();
+           holder.getButtons().forEach(GUIButton::build);
 
        }
 

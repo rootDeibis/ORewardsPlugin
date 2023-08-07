@@ -1,0 +1,46 @@
+CategoryGUIOptions:
+  GUITitle: "&8ORewards  Main menu"
+  rows: 5
+CategoryList:
+  DefaultRewards:
+    GUITitle: "&8ORewards  Global Rewards"
+    rows: 3
+    rewards:
+      - "hourly_reward"
+      - "daily_reward"
+      - "weekly_reward"
+      - "monthly_reward"
+    DisplayItem:
+      slot: 21
+      material: "CHEST"
+      id: 0
+      displayname: "&aGlobal Rewards"
+      lore:
+        - '&8Reward for all players'
+        - ''
+        - '&7To claim these rewards you need at least User rank.'
+        - ''
+        - '&a Click to open'
+  VipRewards:
+    GUITitle: "&8ORewards  VIP Rewards"
+    rows: 3
+    rewards:
+      - "vip_reward"
+    DisplayItem:
+      slot: 23
+      material: "CHEST"
+      id: 0
+      displayname: "&aVIP Rewards"
+      lore:
+        - '&8Reward for VIP players'
+        - ''
+        - '&7To claim these rewards you need at least VIP rank,'
+        - '&7you can get it at play.example.net.'
+        - ''
+        - '&a Click to open'
+  decoration:
+    DisplayItem:
+      slot: [0, 1, 2, 3 ,4 ,5 ,6, 7, 8, 36, 37, 38, 39, 41 ,42, 43, 44]
+      material: "BLACK_STAINED_GLASS_PANE"
+      id: 15
+      displayname: " "

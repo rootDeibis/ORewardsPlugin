@@ -1,38 +1,25 @@
 package me.rootdeibis.orewards.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import org.bukkit.entity.Player;
+import com.cryptomorin.xseries.SkullUtils;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.lang.reflect.Field;
-import java.util.UUID;
+import java.util.HashMap;
+
 
 public class HeadTool {
 
+    private static final HashMap<String, SkullMeta> skullMetaCache = new HashMap<>();
 
-    public static void applyTextures(ItemStack skull, String url) {
-        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+    public static void applyTextures(ItemStack skull, String identifier) {
 
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-
-        gameProfile.getProperties().put("textures", new Property("textures", url));
-
-
-        Field profileField;
-
-        try {
-
-            profileField = skullMeta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(skullMeta, gameProfile);
-
-        }catch (Exception e) {
-            e.printStackTrace();
+        if(!skullMetaCache.containsKey(identifier)) {
+            skullMetaCache.put(identifier, SkullUtils.applySkin(skull.getItemMeta(), identifier));
         }
 
-        skull.setItemMeta(skullMeta);
+
+        skull.setItemMeta(skullMetaCache.get(identifier));
     }
 
 }
