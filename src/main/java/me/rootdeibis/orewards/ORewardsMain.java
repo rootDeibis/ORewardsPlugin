@@ -1,8 +1,10 @@
 package me.rootdeibis.orewards;
 
 import me.rootdeibis.orewards.api.Files.FileManager;
+import me.rootdeibis.orewards.api.Files.RDirectory;
 import me.rootdeibis.orewards.api.guifactory.GUIHolder;
 import me.rootdeibis.orewards.api.guifactory.listeners.GUIFactoryListener;
+import me.rootdeibis.orewards.api.rewards.RewardManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -16,6 +18,8 @@ public class ORewardsMain extends JavaPlugin {
 
     private static FileManager fileManager;
     private static BukkitAudiences adventure;
+
+    private static RewardManager rewardManager;
 
 
     @Override
@@ -32,11 +36,28 @@ public class ORewardsMain extends JavaPlugin {
                 .setDefaults("categories.yml")
                 .create();
 
+
+        String[] defaultsRewards = new String[]{"daily_reward.yml", "hourly_reward.yml", "monthly_reward.yml", "onetime_reward.yml", "vip_reward.yml", "weekly_reward.yml"};
+
+
+        RDirectory rewardsDir = fileManager.dir("rewards");
+
+        if(!rewardsDir.exists()) {
+            fileManager.dir("rewards")
+                    .createIfNoExists();
+
+            rewardsDir.exportsDefaults(defaultsRewards);
+        }
+
+        rewardsDir.loadFilesIndirectory();
+
         this.registerListeners();
 
         adventure = BukkitAudiences.create(this);
 
+        rewardManager = new RewardManager();
 
+        rewardManager.loadRewardsInDirectory();
 
 
 
@@ -66,6 +87,10 @@ public class ORewardsMain extends JavaPlugin {
 
     public static BukkitAudiences getAdventure() {
         return adventure;
+    }
+
+    public static RewardManager getRewardManager() {
+        return rewardManager;
     }
 
     public static Plugin getMain() {

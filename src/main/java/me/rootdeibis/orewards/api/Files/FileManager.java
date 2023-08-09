@@ -1,23 +1,21 @@
 package me.rootdeibis.orewards.api.Files;
 
+import org.bukkit.plugin.Plugin;
+
 import java.io.File;
 import java.util.HashMap;
-
-import org.bukkit.plugin.Plugin;
 
 
 public class FileManager {
 	
 	private final Plugin instance;
 	private final HashMap<String, RFile> FilesCache = new HashMap<>();
-	
+	private final HashMap<String, RDirectory> directoriesCache = new HashMap<>();
+
 	private String resourcesPath;
 	
 	public FileManager(Plugin main) {
 		this.instance = main;
-
-
-
 		
 	}	
 	
@@ -45,6 +43,14 @@ public class FileManager {
 		
 		
 		return FilesCache.get(path);
+	}
+
+	public RDirectory dir(String path) {
+		if(!directoriesCache.containsKey(path)) {
+			directoriesCache.put(path, new RDirectory(this, path));
+		}
+
+		return directoriesCache.get(path);
 	}
 	
 	public Plugin getInstance() {

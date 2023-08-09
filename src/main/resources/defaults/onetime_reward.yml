@@ -1,0 +1,45 @@
+RewardOptions:
+   displayInCategory: true
+   # <permission> | Remove if no't need permission
+   #  example: custom.permission.reward.claim
+   permission: 'orewards.onetime.claim'
+   # <reward_displayname>
+   # Placeholder name
+   displayname: 'One Time Reward'
+   slot: 40
+   Sounds:
+      Available: 'ENTITY_PLAYER_LEVELUP'
+      NoAvailable: 'BLOCK_ANVIL_USE'
+      NeedPermission: 'BLOCK_ANVIL_PLACE'
+DisplayOptions:
+   Available:
+      material: 'CHEST_MINECART'
+      displayname: '&a<reward_displayname>'
+      lore:
+         - '&8Avaible'
+         - ' '
+         - '&7Content:'
+         - '  &8 &7x1 Dirt'
+         - ' '
+         - '&a Click to claim'
+   NoAvailable:
+      material: 'MINECART'
+      displayname: '&c<reward_displayname>'
+      lore:
+         - '&8In cooldown'
+         - ''
+         - '&7This reward has already been claimed'
+         - ''
+         - '&c&m Click to claim'
+   NeedPermission:
+      material: 'RED_STAINED_GLASS_PANE'
+      displayname: '&c<reward_displayname>'
+      lore:
+         - '&8Inaccessible'
+         - ''
+         - '&7You do not have permissions'
+         - '&7to claim this reward'
+         - ''
+         - '&c&m Click to claim'    
+RewardsList:
+   exampleCommand: 'give <player_name> dirt 1'

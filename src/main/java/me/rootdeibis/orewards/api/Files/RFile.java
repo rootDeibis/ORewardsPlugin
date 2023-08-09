@@ -1,12 +1,9 @@
 package me.rootdeibis.orewards.api.Files;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.*;
 
 public class RFile extends YamlConfiguration {
 	
@@ -14,6 +11,8 @@ public class RFile extends YamlConfiguration {
 	private final String path;
 	private final FileManager fileManager;
 	private String defaultFilePath;
+
+	private boolean loaded = false;
 	
 	
 	public RFile(String path, FileManager fm) {
@@ -25,6 +24,12 @@ public class RFile extends YamlConfiguration {
 		
 			
 	}
+
+	public RFile(File file, FileManager fm) {
+		this.path = file.getPath();
+		this.fileManager = fm;
+		this.file = file;
+	}
 	
 	public RFile setDefaults(String path) {
 		this.defaultFilePath = path;
@@ -35,11 +40,11 @@ public class RFile extends YamlConfiguration {
 	private void useDefaults() {
 		
 		InputStream in = this.fileManager.getClass().getResourceAsStream(
-				this.fileManager.getResourcesPath() != null ? this.fileManager.getResourcesPath() + this.path : path
+				this.fileManager.getResourcesPath() != null ? this.fileManager.getResourcesPath() + this.defaultFilePath : defaultFilePath
 				);
 		
 		System.out.println(this.fileManager.getResourcesPath() != null ? this.fileManager.getResourcesPath() + this.path : path);
-		
+
 		byte[] buffer = new byte[1024];
 		int length;
 		
@@ -86,6 +91,7 @@ public class RFile extends YamlConfiguration {
 			
 			
 			this.load(this.file);
+			this.loaded = true;
 			
 			
 			
@@ -108,7 +114,11 @@ public class RFile extends YamlConfiguration {
 		}
 		return this;
 	}
-	
+
+	public boolean isLoaded() {
+		return loaded;
+	}
+
 	public RFile reload() {
 		try {
 			this.load(this.file);
@@ -117,6 +127,16 @@ public class RFile extends YamlConfiguration {
 		}
 		
 		return this;
+	}
+
+	public void load() {
+		try {
+			this.load(this.file);
+			this.loaded = true;
+		} catch (IOException | InvalidConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	public File getFile() {

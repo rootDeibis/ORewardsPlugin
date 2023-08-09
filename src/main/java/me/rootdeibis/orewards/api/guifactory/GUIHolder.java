@@ -2,16 +2,16 @@ package me.rootdeibis.orewards.api.guifactory;
 
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -23,16 +23,15 @@ public class GUIHolder implements InventoryHolder {
     private String title = "GUIHolder Inventory";
     private int rows = 5;
 
-    private final BukkitTask task;
+    private BukkitTask task;
     public GUIHolder(int rows, String title) {
         this.title = title;
         this.rows = rows;
 
-        this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
     }
 
     public GUIHolder() {
-        this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
+
     }
 
 
@@ -63,6 +62,7 @@ public class GUIHolder implements InventoryHolder {
     public void build() {
         if(this.inventory == null) {
             this.inventory = Bukkit.createInventory(this, rows * 9, AdvetureUtils.translate(this.title));
+            this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
         }
 
         this.getButtons().forEach(btn -> {

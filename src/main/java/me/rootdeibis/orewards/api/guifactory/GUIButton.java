@@ -1,14 +1,10 @@
 package me.rootdeibis.orewards.api.guifactory;
 
-import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import me.rootdeibis.orewards.api.guifactory.functions.GuiClickFunction;
 import me.rootdeibis.orewards.api.guifactory.functions.GuiUseObjFunction;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.HeadTool;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -16,13 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class GUIButton implements Cloneable{
+public class GUIButton {
 
     private GuiClickFunction<InventoryClickEvent> clickHandler = (e) -> {};
     private GuiUseObjFunction<String> material_type = () -> "BEDROCK";
@@ -35,6 +32,8 @@ public class GUIButton implements Cloneable{
     private GuiUseObjFunction<String> skull_textures = () -> "rootDeibis";
 
     private ItemStack itemStack = new ItemStack(Material.matchMaterial(material_type.apply()), this.material_amount.apply());
+
+    private Placeholders placeholders = new Placeholders();
 
 
     private int button_slot = 0;
@@ -75,14 +74,25 @@ public class GUIButton implements Cloneable{
         return this;
     }
 
-    public void setSlot(int button_slot) {
+    public GUIButton setSlot(int button_slot) {
         this.button_slot = button_slot;
+
+        return this;
+    }
+
+    public GUIButton setPlaceholders(Placeholders placeholders) {
+        this.placeholders = placeholders;
+
+        return this;
     }
 
     public void setSkullTextures(GuiUseObjFunction<String> skull_textures) {
         this.skull_textures = skull_textures;
     }
 
+    public void onClick(GuiClickFunction<InventoryClickEvent> function) {
+        this.clickHandler = function;
+    }
     public GuiUseObjFunction<String> getType() {
         return material_type;
     }
@@ -153,9 +163,9 @@ public class GUIButton implements Cloneable{
 
         if(meta != null) {
             if(!itemName.equals(meta.getDisplayName()))
-                meta.setDisplayName(AdvetureUtils.translate(itemName));
+                meta.setDisplayName(AdvetureUtils.translate(placeholders.apply(itemName)));
             if(meta.getLore() == null && itemLore != null || meta.getLore() != null && itemLore != null && new HashSet<>(meta.getLore()).containsAll(itemLore))
-                meta.setLore(AdvetureUtils.translate(itemLore));
+                meta.setLore(AdvetureUtils.translate(placeholders.apply(itemLore)));
         }
 
         this.itemStack.setItemMeta(meta);
@@ -178,7 +188,10 @@ public class GUIButton implements Cloneable{
 
         if(hasPath.apply("displayname")) {
             this.item_name = () -> config.getString(this.buildPath(path, "displayname"));
+        } else if(hasPath.apply("name")) {
+            this.item_name = () -> config.getString(this.buildPath(path, "name"));
         }
+
 
         if(hasPath.apply("lore")) {
             this.item_lore = () -> config.getStringList(this.buildPath(path, "lore"));
@@ -195,18 +208,45 @@ public class GUIButton implements Cloneable{
 
     }
 
+
+
     private String buildPath(String... paths) {
         return String.join(".", paths);
     }
 
-    @Override
-    public GUIButton clone() {
-        try {
-            GUIButton clone = (GUIButton) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+
+    public static class Placeholders {
+
+        private final HashMap<String, Object> placeholders = new HashMap<>();
+
+        public Placeholders() {
+
         }
+
+
+        public void add(String name, Object value) {
+            this.placeholders.put(name, value);
+        }
+
+        public void remove(String name) {
+            this.placeholders.remove(name);
+        }
+
+        public String apply(String target) {
+            AtomicReference<String> finalStr = new AtomicReference<>(target);
+
+            this.placeholders.forEach((key, value) -> {
+                finalStr.set(finalStr.get().replaceAll("<" + key + ">", String.valueOf(value)));
+            });
+
+
+            return finalStr.get();
+
+        }
+
+        public List<String> apply(List<String> target) {
+            return target.stream().map(this::apply).collect(Collectors.toList());
+        }
+
     }
 }

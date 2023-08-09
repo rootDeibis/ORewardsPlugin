@@ -2,8 +2,7 @@ package me.rootdeibis.orewards.api.guifactory.listeners;
 
 import me.rootdeibis.orewards.api.guifactory.GUIButton;
 import me.rootdeibis.orewards.api.guifactory.GUIHolder;
-import me.rootdeibis.orewards.api.menus.CategoriesMenu;
-import org.bukkit.event.Event;
+import me.rootdeibis.orewards.api.menus.Categories;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -13,7 +12,7 @@ public class GUIFactoryListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
-        e.getPlayer().openInventory(new CategoriesMenu().getInventory());
+        e.getPlayer().openInventory(new Categories().getInventory());
     }
 
 
