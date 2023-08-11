@@ -3,8 +3,10 @@ package me.rootdeibis.orewards.api.rewards;
 import com.cryptomorin.xseries.XSound;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.Files.RFile;
+import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import org.bukkit.Sound;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class Reward {
@@ -58,7 +60,16 @@ public class Reward {
 
 
     public Status getStatus(UUID player) {
-        return Status.AVAILABLE;
+        RewardManager rewardManager = ORewardsMain.getRewardManager();
+        PlayerReward playerReward = rewardManager.getPlayerReward(player);
+
+        Date currentDate = new Date();
+        Date untilDate = new Date(playerReward.getRewardUntil(this.getName()));
+
+        if(currentDate.after(untilDate)) return Status.AVAILABLE;
+
+        return Status.NO_AVAILABLE;
+
     }
 
     public Sound getStatusSound(UUID player) {

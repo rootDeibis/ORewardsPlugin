@@ -1,73 +1,97 @@
 package me.rootdeibis.orewards.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DurationParser {
-    public static long parseDuration(String duration) {
-        long result = 0;
-        Pattern pattern = Pattern.compile("(\\d+)([smhdwmo])");
-        Matcher matcher = pattern.matcher(duration);
-        while (matcher.find()) {
-            int value = Integer.parseInt(matcher.group(1));
-            String unit = matcher.group(2);
-            switch (unit) {
-                case "s":
-                    result += value * 1000L;
-                    break;
-                case "m":
-                    result += value * 60 * 1000L;
-                    break;
-                case "h":
-                    result += value * 60 * 60 * 1000L;
-                    break;
-                case "d":
-                    result += value * 24 * 60 * 60 * 1000L;
-                    break;
-                case "w":
-                    result += value * 7 * 24 * 60 * 60 * 1000L;
-                    break;
-                case "mo":
-                    result += value * 30 * 24 * 60 * 60 * 1000L;
-                    break;
+    public static int[] formatDateValues(String format) {
+        String[] types = format.split(" ");
+
+        int[] values = {0,0,0,0,0};
+
+        for (String type : types) {
+
+            if (type.endsWith("mo")) {
+                values[0] = Integer.parseInt(type.replaceAll("mo", ""));
             }
+
+            if (type.endsWith("d")) {
+                values[1] = Integer.parseInt(type.replaceAll("d", ""));
+            }
+
+            if (type.endsWith("h")) {
+                values[2] = Integer.parseInt(type.replaceAll("h", ""));
+            }
+
+            if (type.endsWith("m")) {
+                values[3] = Integer.parseInt(type.replaceAll("m", ""));
+            }
+
+            if (type.endsWith("s")) {
+                values[4] = Integer.parseInt(type.replaceAll("s", ""));
+            }
+
         }
-        return result;
+        return values;
     }
 
-    public static String formatDuration(long duration) {
-        StringBuilder result = new StringBuilder();
-        long months = duration / (30 * 24 * 60 * 60 * 1000L);
-        if (months > 0) {
-            result.append(months).append("mo ");
-            duration -= months * 30 * 24 * 60 * 60 * 1000L;
-        }
-        long weeks = duration / (7 * 24 * 60 * 60 * 1000);
-        if (weeks > 0) {
-            result.append(weeks).append("w ");
-            duration -= weeks * 7 * 24 * 60 * 60 * 1000;
-        }
-        long days = duration / (24 * 60 * 60 * 1000);
-        if (days > 0) {
-            result.append(days).append("d ");
-            duration -= days * 24 * 60 * 60 * 1000;
-        }
-        long hours = duration / (60 * 60 * 1000);
-        if (hours > 0) {
-            result.append(hours).append("h ");
-            duration -= hours * 60 * 60 * 1000;
-        }
-        long minutes = duration / (60 * 1000);
-        if (minutes > 0) {
-            result.append(minutes).append("m ");
-            duration -= minutes * 60 * 1000;
-        }
-        long seconds = duration / (1000);
-        if (seconds > 0) {
-            result.append(seconds).append("s ");
-            duration -= seconds * 1000;
-        }
-        return result.toString().trim();
+    public static Date addToDate(String format) {
+        return addToDate(formatDateValues(format));
+    }
+
+
+    public static Date addToDate(int... values) {
+        Calendar calendar = Calendar.getInstance();
+
+        if (values[0] != 0) calendar.add(Calendar.MONTH, values[0]);
+        if (values[1] != 0) calendar.add(Calendar.DAY_OF_MONTH, values[1]);
+        if (values[2] != 0) calendar.add(Calendar.HOUR, values[2]);
+        if (values[3] != 0) calendar.add(Calendar.MINUTE, values[3]);
+        if (values[4] != 0) calendar.add(Calendar.SECOND, values[4]);
+
+        return calendar.getTime();
+    }
+
+    public static String formatDate(int... values) {
+
+        StringBuilder str = new StringBuilder();
+
+        if(values.length >= 1 && values[0] != 0) str.append(values[0] + "mo ");
+        if(values.length >= 2 && values[1] != 0) str.append(values[1] + "d ");
+        if(values.length >= 3 && values[2] != 0) str.append(values[2] + "h ");
+        if(values.length >= 4 && values[3] != 0) str.append(values[3] + "m ");
+        if(values.length >= 5 && values[4] != 0) str.append(values[4] + "s ");
+
+        return str.toString();
+
+    }
+
+    public static String format(long d) {
+        String str = "%d %h %m %s";
+        Date date = new Date(d);
+        long diff = (new Date()).getTime() - date.getTime();
+        long diffSeconds = Math.abs(diff / 1000L % 60L);
+        long diffMinutes = Math.abs(diff / 60000L % 60L);
+        long diffHours = Math.abs(diff / 3600000L % 24L);
+        long diffDays = Math.abs(diff / 86400000L);
+        str = str.replaceAll("%d", diffDays != 0L ? String.valueOf(diffDays) + "d" : "").replaceAll("%h", diffHours != 0L ? String.valueOf(diffHours) + "h" : "").replaceAll("%m", diffMinutes != 0L ? String.valueOf(diffMinutes) + "m" : "").replaceAll("%s", diffSeconds != 0L ? String.valueOf(diffSeconds) + "s" : "");
+        str = str.replaceAll("  ", "");
+        return str.startsWith(" ") ? str.substring(1) : str;
+    }
+
+    public static long nextDayOfweek(String day) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDate localDate = LocalDate.of(localDateTime.getYear(), localDateTime.getMonthValue(), localDateTime.getDayOfMonth());
+        localDate = localDate.with(TemporalAdjusters.next(DayOfWeek.valueOf(day)));
+
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return date.getTime();
     }
 
 }

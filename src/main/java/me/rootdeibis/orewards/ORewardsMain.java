@@ -2,14 +2,22 @@ package me.rootdeibis.orewards;
 
 import me.rootdeibis.orewards.api.Files.FileManager;
 import me.rootdeibis.orewards.api.Files.RDirectory;
+import me.rootdeibis.orewards.api.commands.CommandLoader;
 import me.rootdeibis.orewards.api.guifactory.GUIHolder;
+import me.rootdeibis.orewards.api.guifactory.GuiTaskUpdater;
 import me.rootdeibis.orewards.api.guifactory.listeners.GUIFactoryListener;
+import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.api.rewards.RewardManager;
+import me.rootdeibis.orewards.api.rewards.db.IDatabase;
+import me.rootdeibis.orewards.api.rewards.db.SQLFileDB;
+import me.rootdeibis.orewards.cmds.ORewardsCMD;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.io.File;
 import java.util.stream.Collectors;
 
 public class ORewardsMain extends JavaPlugin {
@@ -20,11 +28,23 @@ public class ORewardsMain extends JavaPlugin {
     private static BukkitAudiences adventure;
 
     private static RewardManager rewardManager;
+    private static BukkitTask guiUpdaterTask;
 
+    private static IDatabase db;
+
+    public static void resumeTask() {
+        guiUpdaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(ORewardsMain.getMain(), new GuiTaskUpdater(), 0L, 20L);
+    }
+
+    public static void stopTask() {
+        guiUpdaterTask.cancel();
+    }
 
     @Override
     public void onEnable() {
         instance = this;
+
+        adventure = BukkitAudiences.create(this);
 
         fileManager = new FileManager(this);
 
@@ -49,17 +69,33 @@ public class ORewardsMain extends JavaPlugin {
             rewardsDir.exportsDefaults(defaultsRewards);
         }
 
+
+
+
+
         rewardsDir.loadFilesIndirectory();
 
         this.registerListeners();
 
-        adventure = BukkitAudiences.create(this);
+
 
         rewardManager = new RewardManager();
 
         rewardManager.loadRewardsInDirectory();
 
 
+
+        new CommandLoader(ORewardsCMD.class).register();
+
+
+
+        db = new SQLFileDB(new File(this.getDataFolder(), "test.db"));
+
+        if(db.isTested()) {
+            db.checkTables(rewardManager.getRewards().stream().map(Reward::getName).toArray(String[]::new));
+        } else {
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
 
     }
 
@@ -91,6 +127,14 @@ public class ORewardsMain extends JavaPlugin {
 
     public static RewardManager getRewardManager() {
         return rewardManager;
+    }
+
+    public static BukkitTask getGuiUpdaterTask() {
+        return guiUpdaterTask;
+    }
+
+    public static IDatabase getDB() {
+        return db;
     }
 
     public static Plugin getMain() {

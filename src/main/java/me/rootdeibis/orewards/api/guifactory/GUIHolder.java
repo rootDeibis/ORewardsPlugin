@@ -3,27 +3,28 @@ package me.rootdeibis.orewards.api.guifactory;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class GUIHolder implements InventoryHolder {
 
     private Inventory inventory;
-    private final Set<GUIButton> buttons = new HashSet<>();
+
+    private final UUID holderId = UUID.randomUUID();
+    private final LinkedList<GUIButton> buttons = new LinkedList<>();
+
+    private static final LinkedList<GUIHolder> holders = new LinkedList<>();
+
 
     private String title = "GUIHolder Inventory";
     private int rows = 5;
 
-    private BukkitTask task;
     public GUIHolder(int rows, String title) {
         this.title = title;
         this.rows = rows;
@@ -31,6 +32,7 @@ public class GUIHolder implements InventoryHolder {
     }
 
     public GUIHolder() {
+
 
     }
 
@@ -43,13 +45,7 @@ public class GUIHolder implements InventoryHolder {
         this.rows = rows;
     }
 
-    public void cancelTask() {
-        this.task.cancel();
-    }
 
-    public BukkitTask getTask() {
-        return task;
-    }
 
     public void addButtons(GUIButton... btn) {
         this.buttons.addAll(Arrays.asList(btn));
@@ -62,21 +58,35 @@ public class GUIHolder implements InventoryHolder {
     public void build() {
         if(this.inventory == null) {
             this.inventory = Bukkit.createInventory(this, rows * 9, AdvetureUtils.translate(this.title));
-            this.task = Bukkit.getScheduler().runTaskTimer(ORewardsMain.getMain(), new GuiTaskUpdater(this), 20L, 20L);
+            register(this);
+            this.checkTask();
         }
+
 
         this.getButtons().forEach(btn -> {
             btn.build();
-            this.inventory.setItem(btn.getBtnSlot(), btn.getItemStack());
+
+            if(!btn.getItemStack().isSimilar(this.inventory.getItem(btn.getBtnSlot()))) {
+                this.inventory.setItem(btn.getBtnSlot(), btn.getItemStack());
+            } else {
+                this.inventory.getItem(btn.getBtnSlot()).setItemMeta(btn.getItemStack().getItemMeta());
+            }
+
+
+
         });
     }
 
+
+    public UUID getHolderId() {
+        return holderId;
+    }
 
     public GUIButton getButtonBySlot(int slot) {
         return this.buttons.stream().filter(btn -> btn.getBtnSlot() == slot).findFirst().orElse(null);
     }
 
-    public Set<GUIButton> getButtons() {
+    public LinkedList<GUIButton> getButtons() {
         return buttons;
     }
 
@@ -86,10 +96,21 @@ public class GUIHolder implements InventoryHolder {
         return this.inventory;
     }
 
+    public static void register(GUIHolder holder) {
+        holders.add(holder);
+    }
+
+    public static void unregister(UUID holder) {
+        holders.removeIf(h -> h.getHolderId().equals(holder));
+    }
+
     public static List<GUIHolder> getOpenedHolders() {
-        return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getOpenInventory)
-                .filter(i -> i.getTopInventory() != null && i.getTopInventory() instanceof GUIHolder)
-                .map(i -> (GUIHolder) i.getTopInventory())
-                .collect(Collectors.toList());
+        return holders;
+    }
+
+    private void checkTask() {
+        if(ORewardsMain.getGuiUpdaterTask() == null || !Bukkit.getScheduler().isCurrentlyRunning(ORewardsMain.getGuiUpdaterTask().getTaskId())) {
+            ORewardsMain.resumeTask();
+        }
     }
 }

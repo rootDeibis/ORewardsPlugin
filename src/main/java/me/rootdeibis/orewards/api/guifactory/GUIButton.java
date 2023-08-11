@@ -1,6 +1,7 @@
 package me.rootdeibis.orewards.api.guifactory;
 
 import com.cryptomorin.xseries.XMaterial;
+import me.rootdeibis.orewards.api.Files.RFile;
 import me.rootdeibis.orewards.api.guifactory.functions.GuiClickFunction;
 import me.rootdeibis.orewards.api.guifactory.functions.GuiUseObjFunction;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
@@ -13,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -28,13 +28,14 @@ public class GUIButton {
     private GuiUseObjFunction<String> item_name = () -> "Undefined gui button name";
     private GuiUseObjFunction<List<String>> item_lore = ArrayList::new;
 
+    private GuiUseObjFunction<Object[]> live_data;
+
     private String currentTextures;
     private GuiUseObjFunction<String> skull_textures = () -> "rootDeibis";
 
     private ItemStack itemStack = new ItemStack(Material.matchMaterial(material_type.apply()), this.material_amount.apply());
 
     private Placeholders placeholders = new Placeholders();
-
 
     private int button_slot = 0;
 
@@ -129,7 +130,14 @@ public class GUIButton {
 
     public void build() {
 
+        if(live_data != null) {
 
+            Object[] values = live_data.apply();
+            RFile configuration = (RFile) values[0];
+            String path = (String) values[1];
+
+            this.setDataFrom(configuration, path);
+        }
 
         String materialName = this.material_type.apply();
         int materialAmount = this.material_amount.apply();
@@ -162,9 +170,9 @@ public class GUIButton {
 
 
         if(meta != null) {
-            if(!itemName.equals(meta.getDisplayName()))
+            if(itemName != null)
                 meta.setDisplayName(AdvetureUtils.translate(placeholders.apply(itemName)));
-            if(meta.getLore() == null && itemLore != null || meta.getLore() != null && itemLore != null && new HashSet<>(meta.getLore()).containsAll(itemLore))
+            if(itemLore != null)
                 meta.setLore(AdvetureUtils.translate(placeholders.apply(itemLore)));
         }
 
@@ -208,6 +216,10 @@ public class GUIButton {
 
     }
 
+    public void setDataLive(GuiUseObjFunction<Object[]> values) {
+        this.live_data = values;
+    }
+
 
 
     private String buildPath(String... paths) {
@@ -217,7 +229,7 @@ public class GUIButton {
 
     public static class Placeholders {
 
-        private final HashMap<String, Object> placeholders = new HashMap<>();
+        private final HashMap<String, GuiUseObjFunction<Object>> placeholders = new HashMap<>();
 
         public Placeholders() {
 
@@ -225,6 +237,10 @@ public class GUIButton {
 
 
         public void add(String name, Object value) {
+            this.placeholders.put(name, () -> value);
+        }
+
+        public void add(String name, GuiUseObjFunction<Object> value) {
             this.placeholders.put(name, value);
         }
 
@@ -236,7 +252,7 @@ public class GUIButton {
             AtomicReference<String> finalStr = new AtomicReference<>(target);
 
             this.placeholders.forEach((key, value) -> {
-                finalStr.set(finalStr.get().replaceAll("<" + key + ">", String.valueOf(value)));
+                finalStr.set(finalStr.get().replaceAll("<" + key + ">", String.valueOf(value.apply())));
             });
 
 
@@ -249,4 +265,6 @@ public class GUIButton {
         }
 
     }
+
+
 }

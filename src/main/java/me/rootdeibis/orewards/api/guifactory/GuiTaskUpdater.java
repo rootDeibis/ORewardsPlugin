@@ -1,32 +1,30 @@
 package me.rootdeibis.orewards.api.guifactory;
 
 
-import org.bukkit.Bukkit;
+import me.rootdeibis.orewards.ORewardsMain;
+
+import java.util.List;
 
 public class GuiTaskUpdater implements Runnable {
 
-    private final GUIHolder holder;
 
-    public GuiTaskUpdater(GUIHolder holder) {
-        this.holder = holder;
+
+    public GuiTaskUpdater() {
+
     }
 
 
     @Override
     public void run() {
+        List<GUIHolder> holders = GUIHolder.getOpenedHolders();
 
-       if(holder.getInventory().getViewers().size() == 0) {
 
-           if(Bukkit.getScheduler().isCurrentlyRunning(this.holder.getTask().getTaskId())) {
-               this.holder.cancelTask();
-           }
+        if(holders.size() == 0) {
+            ORewardsMain.stopTask();
+        }
 
-       } else {
 
-           holder.getButtons().forEach(GUIButton::build);
-
-       }
-
+        holders.forEach(GUIHolder::build);
 
     }
 }

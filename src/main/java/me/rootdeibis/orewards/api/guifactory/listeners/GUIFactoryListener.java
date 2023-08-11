@@ -1,21 +1,28 @@
 package me.rootdeibis.orewards.api.guifactory.listeners;
 
+import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.guifactory.GUIButton;
 import me.rootdeibis.orewards.api.guifactory.GUIHolder;
-import me.rootdeibis.orewards.api.menus.Categories;
+import me.rootdeibis.orewards.utils.AdvetureUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 public class GUIFactoryListener implements Listener {
 
+
+
     @EventHandler
-    public void onBreak(BlockBreakEvent e) {
-        e.getPlayer().openInventory(new Categories().getInventory());
+    public void onJoin(AsyncPlayerPreLoginEvent e) {
+
+        if(!ORewardsMain.getRewardManager().checkPlayer(e.getUniqueId())) {
+            e.setKickMessage(AdvetureUtils.translate("&eORewards &7> &cWe were unable to upload your data, please report this to the administrators."));
+            e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+        }
+
     }
-
-
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
 
@@ -38,22 +45,13 @@ public class GUIFactoryListener implements Listener {
 
     }
 
-    @EventHandler
-    public void onInventoryInteract(InventoryMoveItemEvent e) {
-        if(e.getDestination() != null && e.getDestination().getHolder() instanceof GUIHolder ||
-                e.getSource() != null && e.getSource().getHolder() instanceof GUIHolder) {
-
-           e.setCancelled(true);
-        }
-    }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         if (e.getInventory().getHolder() instanceof GUIHolder) {
             GUIHolder holder = (GUIHolder) e.getInventory().getHolder();
 
-
-            holder.cancelTask();
+            GUIHolder.unregister(holder.getHolderId());
 
         }
     }
