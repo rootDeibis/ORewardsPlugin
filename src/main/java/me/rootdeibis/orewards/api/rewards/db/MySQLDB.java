@@ -57,4 +57,11 @@ public class MySQLDB extends IDatabase  {
         return ds.getConnection();
     }
 
+    @Override
+    public void disconnect() {
+       if(this.ds != null && !this.ds.isClosed()) {
+           this.ds.close();
+       }
+    }
+
 }

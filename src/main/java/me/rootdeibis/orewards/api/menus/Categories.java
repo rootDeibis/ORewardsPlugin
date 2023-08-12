@@ -42,9 +42,9 @@ public class Categories extends GUIHolder {
 
 
                     guiButton.onClick(e -> {
-                        GUIHolder categoryMenu = new CategoryMenu(categoryConfig, e.getWhoClicked().getUniqueId());
+                        GUIHolder categoryMenu = new CategoryMenu(categoryConfig, e.getPlayer().getUniqueId());
 
-                        e.getWhoClicked().openInventory(categoryMenu.getInventory());
+                        e.getPlayer().openInventory(categoryMenu.getInventory());
                     });
 
                     this.addButtons(guiButton);

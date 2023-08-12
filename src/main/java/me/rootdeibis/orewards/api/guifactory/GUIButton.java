@@ -8,6 +8,7 @@ import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.HeadTool;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class GUIButton {
 
-    private GuiClickFunction<InventoryClickEvent> clickHandler = (e) -> {};
+    private GuiClickFunction<ClickContext> clickHandler = (e) -> {};
     private GuiUseObjFunction<String> material_type = () -> "BEDROCK";
     private GuiUseObjFunction<Integer> material_amount = () -> 1;
 
@@ -91,7 +92,7 @@ public class GUIButton {
         this.skull_textures = skull_textures;
     }
 
-    public void onClick(GuiClickFunction<InventoryClickEvent> function) {
+    public void onClick(GuiClickFunction<ClickContext> function) {
         this.clickHandler = function;
     }
     public GuiUseObjFunction<String> getType() {
@@ -115,7 +116,7 @@ public class GUIButton {
         return skull_textures;
     }
 
-    public GuiClickFunction<InventoryClickEvent> getClickHandler() {
+    public GuiClickFunction<ClickContext> getClickHandler() {
         return clickHandler;
     }
 
@@ -264,7 +265,48 @@ public class GUIButton {
             return target.stream().map(this::apply).collect(Collectors.toList());
         }
 
+
+
+
     }
 
+
+    public static class ClickContext {
+
+        private final GUIHolder holder;
+        private final GUIButton clickedButton;
+        private final InventoryClickEvent e;
+
+        public final Player player;
+
+        public ClickContext(GUIHolder holder, GUIButton btn, InventoryClickEvent e) {
+            this.holder = holder;
+            this.clickedButton = btn;
+            this.e = e;
+
+            this.player = (Player) e.getWhoClicked();
+        }
+
+
+        public GUIHolder getHolder() {
+            return holder;
+        }
+
+        public GUIButton getClickedButton() {
+            return clickedButton;
+        }
+
+        public int getSlot() {
+            return this.e.getSlot();
+        }
+
+        public InventoryClickEvent getEvent() {
+            return e;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+    }
 
 }

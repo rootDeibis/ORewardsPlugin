@@ -12,12 +12,12 @@ import java.util.UUID;
 public abstract class IDatabase {
 
 
-    private final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS %s ( UUID TEXT PRIMARY KEY, until INTEGER, server TEXT CHECK(LENGTH(server) <= 20) );";
+    private final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS %s ( UUID TEXT, until varchar(40), server TEXT);";
     private final String SELECT_UNTIL = "SELECT until FROM %s WHERE UUID = '%s' LIMIT 1;";
 
     private final String CREATE_ROW = "INSERT INTO %s (UUID, until, server) VALUES ('%s', '%s', '%s');";
 
-    private final String UPDATE_ROW = "UPDATE %s SET until = %s WHERE rowid = ( SELECT rowid FROM %s WHERE UUID = '%s' LIMIT 1 );";
+    private final String UPDATE_ROW = "UPDATE %s SET until = %s WHERE UUID = '%s' LIMIT 1";
     private boolean tested = false;
     abstract Connection createConnection() throws Exception;
 
@@ -93,4 +93,5 @@ public abstract class IDatabase {
     }
 
 
+    public abstract void disconnect();
 }

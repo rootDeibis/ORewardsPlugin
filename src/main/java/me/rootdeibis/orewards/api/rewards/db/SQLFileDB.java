@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class SQLFileDB extends IDatabase {
     private File db_file;
@@ -46,6 +47,17 @@ public class SQLFileDB extends IDatabase {
             connection = DriverManager.getConnection("jdbc:sqlite:" + this.db_file);
         }
         return connection;
+    }
+
+    @Override
+    public void disconnect() {
+        try {
+            if(this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

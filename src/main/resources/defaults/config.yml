@@ -26,7 +26,7 @@ Messages:
   WelcomeRewardAvailable:
     Delay: 2 # Seconds
     Enabled: true
-    Availables: "Hey <player_name>, you have available <rewards_availables> rewards"
+    Availables: "<hover show-text=''><green>Hey <player_name>, you have available <rewards_availables> rewards"
     NoAvailable: "&cOh no, no rewards availables"
   PlaceholderAPI:
     # Placeholder > %oreward_available_[name]%

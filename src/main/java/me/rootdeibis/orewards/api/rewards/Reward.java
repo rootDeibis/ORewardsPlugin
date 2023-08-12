@@ -4,12 +4,21 @@ import com.cryptomorin.xseries.XSound;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.Files.RFile;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
+import me.rootdeibis.orewards.utils.AdvetureUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class Reward {
+
+    private final String CMD_INDENTIFICATOR = "cmd:";
+    private final String MSG_INDENTIFICATOR = "msg:";
+    private final String MINIMSG_INDENTIFICATOR = "minimsg:";
+
+
 
     public enum Status {
 
@@ -50,7 +59,9 @@ public class Reward {
 
     public String getPermission() {
 
-        return this.rewardConfig.getString("RewardOptions.permission");
+        String permission = this.rewardConfig.getString("RewardOptions.permission");
+
+        return permission != null ? permission : "none";
 
     }
 
@@ -62,6 +73,8 @@ public class Reward {
     public Status getStatus(UUID player) {
         RewardManager rewardManager = ORewardsMain.getRewardManager();
         PlayerReward playerReward = rewardManager.getPlayerReward(player);
+
+        if(!this.getPermission().equals("none") && !Bukkit.getPlayer(player).hasPermission(this.getPermission())) return Status.PERMISSION;
 
         Date currentDate = new Date();
         Date untilDate = new Date(playerReward.getRewardUntil(this.getName()));
@@ -91,9 +104,37 @@ public class Reward {
         return sound.parseSound();
     }
 
+    public String[] getActions() {
+        return this.rewardConfig.getConfigurationSection("RewardsList").getKeys(false).stream()
+                .map(r -> this.rewardConfig.getString("RewardsList." + r))
+                .toArray(String[]::new);
+    }
+
+
 
 
     public RFile getRewardConfig() {
         return rewardConfig;
     }
+
+    public void claim(Player player, String... actions) {
+
+
+        String[] a = actions.length == 0 ? this.getActions() : actions;
+
+        for (String action : a) {
+
+            if(action.startsWith(MSG_INDENTIFICATOR)) {
+                player.sendMessage(AdvetureUtils.translate(action.replaceAll(MSG_INDENTIFICATOR, "")));
+            } else if(action.startsWith(MINIMSG_INDENTIFICATOR)) {
+
+                AdvetureUtils.sender(player, action.replaceAll(MINIMSG_INDENTIFICATOR, ""));
+            } else {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action.replaceAll(CMD_INDENTIFICATOR, ""));
+            }
+
+        }
+
+    }
+
 }
