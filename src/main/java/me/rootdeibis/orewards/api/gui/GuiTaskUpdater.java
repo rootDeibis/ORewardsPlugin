@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.guifactory;
+package me.rootdeibis.orewards.api.gui;
 
 
 import me.rootdeibis.orewards.ORewardsMain;

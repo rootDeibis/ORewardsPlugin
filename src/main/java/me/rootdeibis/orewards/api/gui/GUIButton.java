@@ -1,9 +1,9 @@
-package me.rootdeibis.orewards.api.guifactory;
+package me.rootdeibis.orewards.api.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import me.rootdeibis.orewards.api.Files.RFile;
-import me.rootdeibis.orewards.api.guifactory.functions.GuiClickFunction;
-import me.rootdeibis.orewards.api.guifactory.functions.GuiUseObjFunction;
+import me.rootdeibis.orewards.api.configuration.RFile;
+import me.rootdeibis.orewards.api.gui.functions.GuiClickFunction;
+import me.rootdeibis.orewards.api.gui.functions.GuiUseObjFunction;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.HeadTool;
 import org.bukkit.Material;
@@ -14,9 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -147,22 +147,22 @@ public class GUIButton {
         List<String> itemLore = this.item_lore.apply();
 
 
-        if(!materialName.equals(this.itemStack.getType().name()) || this.itemStack.getType() == XMaterial.PLAYER_HEAD.parseMaterial()) {
-            if(XMaterial.matchXMaterial(materialName).orElse(XMaterial.BEDROCK) != XMaterial.PLAYER_HEAD) {
-                this.itemStack = XMaterial.matchXMaterial(this.material_type.apply()).orElse(XMaterial.BEDROCK).parseItem();
-            } else {
 
-                this.itemStack = XMaterial.PLAYER_HEAD.parseItem();
-
-                assert this.itemStack != null;
-
-                if(currentTextures == null || !currentTextures.equalsIgnoreCase(skull_textures.apply())) {
-                    HeadTool.applyTextures(this.itemStack, this.skull_textures.apply());
-                    currentTextures = this.skull_textures.apply();
-                }
-
-            }
+        if(!itemStack.getType().name().equals(XMaterial.matchXMaterial(materialName).orElse(XMaterial.BEDROCK).name())) {
+            this.itemStack =  XMaterial.matchXMaterial(this.material_type.apply()).orElse(XMaterial.BEDROCK).parseItem();
         }
+
+        String textures = skull_textures.apply();
+
+        if(XMaterial.PLAYER_HEAD.isSimilar(itemStack)) {
+
+            if(currentTextures == null || !currentTextures.equalsIgnoreCase(textures)) {
+                currentTextures = textures;
+            }
+            HeadTool.applyTextures(this.itemStack, textures);
+
+        }
+
 
         if(materialAmount != this.getItemStack().getAmount())
             this.itemStack.setAmount(materialAmount);
@@ -231,6 +231,7 @@ public class GUIButton {
     public static class Placeholders {
 
         private final HashMap<String, GuiUseObjFunction<Object>> placeholders = new HashMap<>();
+        private final HashMap<String, String> cache = new HashMap<>();
 
         public Placeholders() {
 
@@ -250,19 +251,19 @@ public class GUIButton {
         }
 
         public String apply(String target) {
-            AtomicReference<String> finalStr = new AtomicReference<>(target);
+            String targetResult = target;
 
-            this.placeholders.forEach((key, value) -> {
-                finalStr.set(finalStr.get().replaceAll("<" + key + ">", String.valueOf(value.apply())));
-            });
+            for (String key : this.placeholders.keySet()) {
+                targetResult = targetResult.replaceAll("<" + key + ">", String.valueOf(placeholders.get(key).apply()));
+            }
 
-
-            return finalStr.get();
+            return targetResult;
 
         }
 
         public List<String> apply(List<String> target) {
-            return target.stream().map(this::apply).collect(Collectors.toList());
+            return Arrays.stream(this.apply(String.join("__.", target)
+            ).split("__.")).collect(Collectors.toList());
         }
 
 

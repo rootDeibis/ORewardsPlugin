@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.guifactory;
+package me.rootdeibis.orewards.api.gui;
 
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
@@ -6,20 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class GUIHolder implements InventoryHolder {
-
     private Inventory inventory;
-
     private final UUID holderId = UUID.randomUUID();
-    private final LinkedList<GUIButton> buttons = new LinkedList<>();
-
-    private static final LinkedList<GUIHolder> holders = new LinkedList<>();
+    private final List<GUIButton> buttons = new ArrayList<>();
+    private static final List<GUIHolder> holders = new ArrayList<>();
 
 
     private String title = "GUIHolder Inventory";
@@ -59,7 +53,7 @@ public class GUIHolder implements InventoryHolder {
         if(this.inventory == null) {
             this.inventory = Bukkit.createInventory(this, rows * 9, AdvetureUtils.translate(this.title));
             register(this);
-            this.checkTask();
+            checkTask();
         }
 
 
@@ -71,9 +65,6 @@ public class GUIHolder implements InventoryHolder {
             } else {
                 this.inventory.getItem(btn.getBtnSlot()).setItemMeta(btn.getItemStack().getItemMeta());
             }
-
-
-
         });
     }
 
@@ -86,7 +77,7 @@ public class GUIHolder implements InventoryHolder {
         return this.buttons.stream().filter(btn -> btn.getBtnSlot() == slot).findFirst().orElse(null);
     }
 
-    public LinkedList<GUIButton> getButtons() {
+    public List<GUIButton> getButtons() {
         return buttons;
     }
 
@@ -106,6 +97,10 @@ public class GUIHolder implements InventoryHolder {
 
     public static List<GUIHolder> getOpenedHolders() {
         return holders;
+    }
+
+    public static GUIHolder getMenu(InventoryHolder holder) {
+        return holders.stream().filter(m -> m == holder).findFirst().orElse(null);
     }
 
     private void checkTask() {

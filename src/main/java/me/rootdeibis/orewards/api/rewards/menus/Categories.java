@@ -1,13 +1,14 @@
-package me.rootdeibis.orewards.api.menus;
+package me.rootdeibis.orewards.api.rewards.menus;
 
 
 import me.rootdeibis.orewards.ORewardsMain;
-import me.rootdeibis.orewards.api.Files.RFile;
-import me.rootdeibis.orewards.api.guifactory.GUIButton;
-import me.rootdeibis.orewards.api.guifactory.GUIHolder;
+import me.rootdeibis.orewards.api.configuration.RFile;
+import me.rootdeibis.orewards.api.gui.GUIButton;
+import me.rootdeibis.orewards.api.gui.GUIHolder;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Categories extends GUIHolder {
@@ -15,14 +16,16 @@ public class Categories extends GUIHolder {
 
     private RFile config;
 
-    public Categories() {
-        config = ORewardsMain.getFileManager().use("categories.yml");
+    public Categories(UUID viewer) {
+        config = ORewardsMain.getCore().getFileManager().use("categories.yml");
 
         this.setRows(config.getInt("CategoryGUIOptions.rows"));
         this.setTitle(config.getString("CategoryGUIOptions.GUITitle"));
 
         this.loadDecoration();
         this.loadCategoriesButtons();
+
+        ORewardsMain.getCore().getRewardManager().checkPlayer(viewer);
 
         this.build();
     }
@@ -74,7 +77,7 @@ public class Categories extends GUIHolder {
     public class CategoryConfig {
 
         private final String path;
-        private final RFile config = ORewardsMain.getFileManager().use("categories.yml");
+        private final RFile config = ORewardsMain.getCore().getFileManager().use("categories.yml");
 
         public CategoryConfig(String name) {
             this.path = "CategoryList." + name + ".";

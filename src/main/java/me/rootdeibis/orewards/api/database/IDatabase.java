@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.rewards.db;
+package me.rootdeibis.orewards.api.database;
 
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.utils.DurationParser;
@@ -13,13 +13,13 @@ public abstract class IDatabase {
 
 
     private final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS %s ( UUID TEXT, until varchar(40), server TEXT);";
-    private final String SELECT_UNTIL = "SELECT until FROM %s WHERE UUID = '%s' LIMIT 1;";
+    private final String SELECT_UNTIL = "SELECT * FROM %s WHERE UUID = '%s' LIMIT 1;";
 
     private final String CREATE_ROW = "INSERT INTO %s (UUID, until, server) VALUES ('%s', '%s', '%s');";
 
-    private final String UPDATE_ROW = "UPDATE %s SET until = %s WHERE UUID = '%s' LIMIT 1";
+    private final String UPDATE_ROW = "UPDATE %s SET until = '%s' WHERE UUID = '%s';";
     private boolean tested = false;
-    abstract Connection createConnection() throws Exception;
+    protected abstract Connection createConnection() throws Exception;
 
 
     private boolean execute(String query, Object... values) {
@@ -57,7 +57,7 @@ public abstract class IDatabase {
     }
 
     public boolean update(String rewardName, long timeUntil, UUID uuid) {
-        return this.execute(UPDATE_ROW, rewardName, timeUntil,rewardName, uuid.toString());
+        return this.execute(UPDATE_ROW, rewardName, timeUntil, uuid.toString());
     }
     public long get(Reward reward, UUID uuid) {
         long until = 0;

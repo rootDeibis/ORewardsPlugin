@@ -1,8 +1,8 @@
-package me.rootdeibis.orewards.api.menus;
+package me.rootdeibis.orewards.api.rewards.menus;
 
 import me.rootdeibis.orewards.ORewardsMain;
-import me.rootdeibis.orewards.api.guifactory.GUIButton;
-import me.rootdeibis.orewards.api.guifactory.GUIHolder;
+import me.rootdeibis.orewards.api.gui.GUIButton;
+import me.rootdeibis.orewards.api.gui.GUIHolder;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.DurationParser;
@@ -23,22 +23,21 @@ public class CategoryMenu extends GUIHolder {
     public CategoryMenu(Categories.CategoryConfig categoryConfig, UUID viewer) {
         super(categoryConfig.getGUIRows(), categoryConfig.getGUITitle());
 
-        ORewardsMain.getRewardManager().checkPlayer(viewer);
-
         this.categoryConfig = categoryConfig;
 
-        this.rewards = ORewardsMain.getRewardManager().getRewards().stream().filter(r -> categoryConfig.getRewardsNames().contains(r.getName())).collect(Collectors.toList());
+        this.rewards = ORewardsMain.getCore().getRewardManager().getRewards().stream().filter(r -> categoryConfig.getRewardsNames().contains(r.getName())).collect(Collectors.toList());
         this.viewer = viewer;
+
 
         this.loadRewardsButtons();
     }
 
     public void loadRewardsButtons() {
 
-        PlayerReward playerReward = ORewardsMain.getRewardManager().getPlayerReward(this.viewer);
-        this.rewards.forEach(reward -> {
+        PlayerReward playerReward = ORewardsMain.getCore().getRewardManager().getPlayerReward(this.viewer);
 
 
+        for (Reward reward : this.rewards) {
             GUIButton.Placeholders placeholders = new GUIButton.Placeholders();
 
             placeholders.add("reward_displayname", reward.getDisplayName());
@@ -70,7 +69,7 @@ public class CategoryMenu extends GUIHolder {
                     reward.claim(e.getPlayer(),
                             Arrays.stream(reward.getActions()).map(placeholders::apply)
                                     .toArray(String[]::new)
-                            );
+                    );
                 }
 
                 e.getPlayer().playSound(e.getPlayer().getLocation(), reward.getStatusSound(this.viewer), 1,2);
@@ -78,8 +77,8 @@ public class CategoryMenu extends GUIHolder {
             });
 
             this.addButtons(rewardBtn);
+        }
 
-        });
 
         this.build();
     }

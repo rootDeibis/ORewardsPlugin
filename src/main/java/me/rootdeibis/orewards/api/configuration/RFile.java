@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.Files;
+package me.rootdeibis.orewards.api.configuration;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;

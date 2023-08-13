@@ -1,7 +1,8 @@
-package me.rootdeibis.orewards.api.rewards.db;
+package me.rootdeibis.orewards.api.database.type;
 
 
 import me.rootdeibis.orewards.ORewardsLogger;
+import me.rootdeibis.orewards.api.database.IDatabase;
 
 import java.io.File;
 import java.io.IOException;

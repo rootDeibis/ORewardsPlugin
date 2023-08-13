@@ -2,8 +2,7 @@ package me.rootdeibis.orewards.api.rewards;
 
 import me.rootdeibis.orewards.ORewardsLogger;
 import me.rootdeibis.orewards.ORewardsMain;
-import me.rootdeibis.orewards.api.Files.RDirectory;
-import me.rootdeibis.orewards.api.rewards.db.IDatabase;
+import me.rootdeibis.orewards.api.database.IDatabase;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.DurationParser;
 
@@ -15,15 +14,13 @@ public class RewardManager {
 
     private final List<Reward> rewards = new ArrayList<>();
     private final List<PlayerReward> playerRewards = new ArrayList<>();
-    private final RDirectory rewardsDir;
 
     public RewardManager() {
-        this.rewardsDir = ORewardsMain.getFileManager().dir("rewards");
     }
 
 
     public void loadRewardsInDirectory() {
-        this.rewardsDir.getRFiles().forEach((name, file) -> {
+        ORewardsMain.getCore().getFileManager().dir("rewards").getRFiles().forEach((name, file) -> {
             rewards.add(new Reward(name.replaceAll(".yml", "")));
 
         });
@@ -48,7 +45,7 @@ public class RewardManager {
 
 
     public boolean checkPlayer(UUID uuid) {
-        IDatabase db = ORewardsMain.getDB();
+        IDatabase db = ORewardsMain.getCore().getDatabaseLoader().getDatabase();
 
         if(!db.isTested()) return false;
         if(playerRewards.stream().anyMatch(r -> r.getUUID().equals(uuid))) return true;
@@ -57,11 +54,9 @@ public class RewardManager {
 
         PlayerReward rewardsCache = this.getPlayerReward(uuid);
 
-        for (Reward reward : ORewardsMain.getRewardManager().getRewards()) {
+        for (Reward reward : ORewardsMain.getCore().getRewardManager().getRewards()) {
 
             long until = db.get(reward, uuid);
-
-
 
 
             if(until != 0) {

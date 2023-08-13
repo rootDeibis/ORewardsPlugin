@@ -1,13 +1,14 @@
-package me.rootdeibis.orewards.api.rewards.db;
+package me.rootdeibis.orewards.api.database.type;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.rootdeibis.orewards.ORewardsLogger;
+import me.rootdeibis.orewards.api.database.IDatabase;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MySQLDB extends IDatabase  {
+public class MySQLDB extends IDatabase {
 
 
         private String db_name;

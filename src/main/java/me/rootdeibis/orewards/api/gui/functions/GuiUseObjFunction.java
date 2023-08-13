@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.guifactory.functions;
+package me.rootdeibis.orewards.api.gui.functions;
 
 public interface GuiUseObjFunction<Out> {
 

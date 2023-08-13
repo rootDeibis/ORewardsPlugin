@@ -1,5 +1,12 @@
 main: me.rootdeibis.orewards.ORewardsMain
-name: ORewards-Bukkit
-version: 1.0
+name: orewards
+version: beta-2.0
 api-version: <1.13
 author: "Deibis A - Alias rootDeibis"
+description: "This is a recoded version of the original orewards, With this plugin you can create rewards for your player by time"
+commands:
+  orewards:
+    aliases:
+      - orw
+    permission: "orewards.cmd"
+    usage: "orewards help"

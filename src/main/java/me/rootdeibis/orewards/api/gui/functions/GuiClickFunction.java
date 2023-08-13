@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.guifactory.functions;
+package me.rootdeibis.orewards.api.gui.functions;
 
 @FunctionalInterface
 public interface GuiClickFunction<In1> {

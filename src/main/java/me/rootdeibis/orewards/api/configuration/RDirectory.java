@@ -1,4 +1,4 @@
-package me.rootdeibis.orewards.api.Files;
+package me.rootdeibis.orewards.api.configuration;
 
 import java.io.File;
 import java.util.Arrays;
