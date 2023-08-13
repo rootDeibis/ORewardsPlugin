@@ -1,6 +1,7 @@
 package me.rootdeibis.orewards;
 
 import me.rootdeibis.orewards.api.ORewardsCore;
+import me.rootdeibis.orewards.api.commands.CommandLoader;
 import me.rootdeibis.orewards.api.gui.GUIHolder;
 import me.rootdeibis.orewards.api.gui.GuiTaskUpdater;
 import me.rootdeibis.orewards.api.gui.listeners.GUIFactoryListener;
@@ -45,7 +46,7 @@ public class ORewardsMain extends JavaPlugin {
 
         this.registerListeners();
 
-        this.getCommand("orewards").setExecutor(new ORewardsCMD());
+        CommandLoader.register(ORewardsCMD.class);
 
 
     }

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class IDatabase {
@@ -29,7 +30,8 @@ public abstract class IDatabase {
             Connection conn = this.createConnection();
             Statement statement = conn.createStatement();
 
-            statement.execute(String.format(query, values));
+
+            statement.executeUpdate(String.format(query, values));
 
             result = true;
 
@@ -44,10 +46,15 @@ public abstract class IDatabase {
         return result;
     }
 
+
     public void checkTables(String... tables) {
-        for (String table : tables) {
-            this.execute(CREATE_TABLE_SQL, table);
-        }
+
+
+            this.execute(
+                    String.join("", Arrays.stream(tables).map(r -> String.format(CREATE_TABLE_SQL, r))
+                            .toArray(String[]::new))
+            );
+
     }
 
 

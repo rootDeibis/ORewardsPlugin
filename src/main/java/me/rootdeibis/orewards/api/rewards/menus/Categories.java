@@ -74,7 +74,7 @@ public class Categories extends GUIHolder {
 
     }
 
-    public class CategoryConfig {
+    public static class CategoryConfig {
 
         private final String path;
         private final RFile config = ORewardsMain.getCore().getFileManager().use("categories.yml");
@@ -97,6 +97,16 @@ public class Categories extends GUIHolder {
 
         public String getPath() {
             return path;
+        }
+
+
+        public static CategoryConfig loadFromName(String name) {
+            RFile conf = ORewardsMain.getCore().getFileManager().use("categories.yml");
+
+            if (!conf.contains("CategoryList." + name)) return null;
+
+            return new Categories.CategoryConfig(name);
+
         }
     }
 }

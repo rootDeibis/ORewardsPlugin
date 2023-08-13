@@ -1,20 +1,36 @@
 package me.rootdeibis.orewards.commands;
 
 
-import me.rootdeibis.orewards.api.rewards.menus.Categories;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.rootdeibis.orewards.api.commands.annotations.CoreCommand;
+import me.rootdeibis.orewards.api.commands.annotations.CoreCommandLoader;
+import me.rootdeibis.orewards.api.commands.annotations.CoreSubCommands;
+import me.rootdeibis.orewards.api.commands.annotations.TabCompletion;
+import me.rootdeibis.orewards.utils.AdvetureUtils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public class ORewardsCMD implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
 
 
-    @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+@CoreCommandLoader
+public class ORewardsCMD {
 
-        ((Player)commandSender).openInventory(new Categories(((Player)commandSender).getUniqueId()).getInventory());
+
+    @CoreCommand(name = "orewards", aliases = "orw", permission = "orewards.command")
+    @CoreSubCommands(list = {ORewardsSubCMD.class})
+    public boolean onCommand(CommandSender sender, String[] args) {
+
+        if (args.length == 0) {
+
+            sender.sendMessage(AdvetureUtils.translate("&eORewards &7> &cplease use /orewards help for more information."));
+            return false;
+        }
 
         return false;
+    }
+
+    @TabCompletion(target = TabCompletion.TargetType.MAIN, command = "orewards")
+    public List<String> getCompletions() {
+        return new ArrayList<>();
     }
 }

@@ -26,7 +26,7 @@ public class RewardManager {
         });
     }
     public Reward getReward(String name) {
-        return rewards.stream().filter(r -> r.getName().equals(name)).findFirst().orElse(null);
+        return rewards.stream().filter(r -> r.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public List<Reward> getRewards() {
