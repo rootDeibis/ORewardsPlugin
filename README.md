@@ -1,4 +1,5 @@
-# ORewardsPlugin
+![ORewards Plugin](https://i.imgur.com/QAypmK7.gif)
+
 Reward system for minecraft servers.
 
 
