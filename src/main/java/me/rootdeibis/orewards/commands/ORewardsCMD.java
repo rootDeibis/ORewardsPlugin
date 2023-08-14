@@ -17,7 +17,7 @@ public class ORewardsCMD {
 
 
     @CoreCommand(name = "orewards", aliases = "orw", permission = "orewards.command")
-    @CoreSubCommands(list = {ORewardsSubCMD.class})
+    @CoreSubCommands(list = {ORewardsSubCmdMenu.class})
     public boolean onCommand(CommandSender sender, String[] args) {
 
         if (args.length == 0) {

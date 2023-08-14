@@ -54,7 +54,13 @@ public class Reward {
     }
 
     public String getTime() {
-        return this.rewardConfig.getString("RewardOptions.time");
+        String time = this.rewardConfig.getString("RewardOptions.time");
+
+        return time != null ? time : "99999mo";
+    }
+
+    public boolean displayInCategories() {
+        return this.rewardConfig.getBoolean("RewardOptions.displayInCategory");
     }
 
     public String getPermission() {

@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ORewardsSubCMD {
+public class ORewardsSubCmdMenu {
 
 
     private final String ONLY_PLAYER_MESSAGE = AdvetureUtils.translate("&eORewards &7> &cOnly players can perform this action.");
@@ -25,9 +25,7 @@ public class ORewardsSubCMD {
 
                 Player player = (Player) sender;
 
-                Categories categoriesMenu = new Categories(player.getUniqueId());
-
-                player.openInventory(categoriesMenu.getInventory());
+                Categories.show(player);
 
                 return true;
 
@@ -43,16 +41,8 @@ public class ORewardsSubCMD {
                 Player player = (Player) sender;
 
                 String categoryName = args[0];
-                Categories.CategoryConfig categoryConfig = Categories.CategoryConfig.loadFromName(categoryName);
 
-                if(categoryConfig != null) {
-                    CategoryMenu categoryMenu = new CategoryMenu(categoryConfig, player.getUniqueId());
-
-
-                    player.openInventory(categoryMenu.getInventory());
-
-                    return true;
-                } else {
+                if(!CategoryMenu.show(categoryName, player)) {
                     sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
                 }
 
@@ -67,16 +57,8 @@ public class ORewardsSubCMD {
 
             if(player != null) {
                 String categoryName = args[0];
-                Categories.CategoryConfig categoryConfig = Categories.CategoryConfig.loadFromName(categoryName);
 
-                if(categoryConfig != null) {
-                    CategoryMenu categoryMenu = new CategoryMenu(categoryConfig, player.getUniqueId());
-
-
-                    player.openInventory(categoryMenu.getInventory());
-
-                    return true;
-                } else {
+                if(!CategoryMenu.show(categoryName, player)) {
                     sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
                 }
             } else {
@@ -85,6 +67,18 @@ public class ORewardsSubCMD {
         }
 
         return false;
+
+    }
+
+
+    @CoreCommand(name = "menu", permission = "orewards.cmd.menu")
+    public void onMenuCommand(CommandSender sender, String[] args) {
+
+        if(sender instanceof Player) {
+            Player player = (Player) sender;
+
+            Categories.show(player);
+        }
 
     }
 

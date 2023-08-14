@@ -35,6 +35,7 @@ public class RewardManager {
 
 
 
+
     public PlayerReward getPlayerReward(UUID player) {
         if(playerRewards.stream().noneMatch(p -> p.getUUID().equals(player))) {
             playerRewards.add(new PlayerReward(player));

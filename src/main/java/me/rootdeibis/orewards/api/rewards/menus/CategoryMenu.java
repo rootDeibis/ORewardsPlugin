@@ -7,6 +7,7 @@ import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.DurationParser;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +82,21 @@ public class CategoryMenu extends GUIHolder {
 
 
         this.build();
+    }
+
+    public static boolean show(String name, Player player) {
+        Categories.CategoryConfig categoryConfig = Categories.CategoryConfig.loadFromName(name);
+
+        if(categoryConfig != null && ORewardsMain.getCore().getRewardManager().checkPlayer(player.getUniqueId())) {
+            CategoryMenu categoryMenu = new CategoryMenu(categoryConfig, player.getUniqueId());
+
+
+            player.openInventory(categoryMenu.getInventory());
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

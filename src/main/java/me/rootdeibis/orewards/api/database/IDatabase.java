@@ -31,7 +31,7 @@ public abstract class IDatabase {
             Statement statement = conn.createStatement();
 
 
-            statement.executeUpdate(String.format(query, values));
+            statement.execute(String.format(query, values));
 
             result = true;
 
@@ -50,10 +50,23 @@ public abstract class IDatabase {
     public void checkTables(String... tables) {
 
 
-            this.execute(
-                    String.join("", Arrays.stream(tables).map(r -> String.format(CREATE_TABLE_SQL, r))
-                            .toArray(String[]::new))
-            );
+        try {
+            Connection conn = this.createConnection();
+            Statement statement = conn.createStatement();
+
+
+            statement.executeUpdate(String.join("", Arrays.stream(tables).map(r -> String.format(CREATE_TABLE_SQL, r))
+                    .toArray(String[]::new)));
+
+
+
+            statement.close();
+            conn.close();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 

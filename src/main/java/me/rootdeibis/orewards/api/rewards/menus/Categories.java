@@ -5,7 +5,13 @@ import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.gui.GUIButton;
 import me.rootdeibis.orewards.api.gui.GUIHolder;
+import me.rootdeibis.orewards.api.rewards.Reward;
+import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
+import me.rootdeibis.orewards.utils.DurationParser;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -15,19 +21,29 @@ public class Categories extends GUIHolder {
 
 
     private RFile config;
+    private final UUID viewer;
 
     public Categories(UUID viewer) {
+        this.viewer = viewer;
         config = ORewardsMain.getCore().getFileManager().use("categories.yml");
 
         this.setRows(config.getInt("CategoryGUIOptions.rows"));
         this.setTitle(config.getString("CategoryGUIOptions.GUITitle"));
 
-        this.loadDecoration();
-        this.loadCategoriesButtons();
 
-        ORewardsMain.getCore().getRewardManager().checkPlayer(viewer);
+
+            this.loadDecoration();
+            this.loadCategoriesButtons();
+
+
 
         this.build();
+
+
+
+
+
+
     }
 
     public void loadCategoriesButtons() {
@@ -54,6 +70,53 @@ public class Categories extends GUIHolder {
 
         });
 
+        PlayerReward playerReward = ORewardsMain.getCore().getRewardManager().getPlayerReward(this.viewer);
+
+        ORewardsMain.getCore().getRewardManager().getRewards().stream().filter(Reward::displayInCategories).collect(Collectors.toList())
+                .forEach(reward -> {
+
+
+                    GUIButton.Placeholders placeholders = new GUIButton.Placeholders();
+
+                    placeholders.add("reward_displayname", reward.getDisplayName());
+
+                    placeholders.add("reward_cooldown", () -> DurationParser.format(playerReward.getRewardUntil(reward.getName())));
+
+                    placeholders.add("player_name", Bukkit.getOfflinePlayer(this.viewer).getName());
+
+                    GUIButton rewardBtn = new GUIButton();
+
+                    rewardBtn.setDataLive(() -> new Object[]{ reward.getRewardConfig(), "DisplayOptions." + reward.getStatus(this.viewer).path()});
+
+
+                    rewardBtn.setSlot(reward.getDisplaySlot());
+                    rewardBtn.setPlaceholders(placeholders);
+
+
+                    rewardBtn.onClick(e -> {
+
+
+                        Reward.Status status = reward.getStatus(this.viewer);
+
+                        if(status == Reward.Status.AVAILABLE) {
+
+                            playerReward.setRewardUntil(reward.getName(), DurationParser.addToDate(reward.getTime()).getTime());
+                            playerReward.saveUntil(reward.getName());
+
+
+                            reward.claim(e.getPlayer(),
+                                    Arrays.stream(reward.getActions()).map(placeholders::apply)
+                                            .toArray(String[]::new)
+                            );
+                        }
+
+                        e.getPlayer().playSound(e.getPlayer().getLocation(), reward.getStatusSound(this.viewer), 1,2);
+
+                    });
+
+                    this.addButtons(rewardBtn);
+                });
+
 
 
     }
@@ -72,6 +135,12 @@ public class Categories extends GUIHolder {
         });
 
 
+    }
+
+    public static void show(Player player) {
+        if(ORewardsMain.getCore().getRewardManager().checkPlayer(player.getUniqueId())) {
+            player.openInventory(new Categories(player.getUniqueId()).getInventory());
+        }
     }
 
     public static class CategoryConfig {

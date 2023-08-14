@@ -26,7 +26,7 @@ Messages:
   WelcomeRewardAvailable:
     Delay: 2 # Seconds
     Enabled: true
-    Availables: "<hover show-text=''><green>Hey <player_name>, you have available <rewards_availables> rewards"
+    Availables: "<click:run_command:/orw menu><hover:show_text:'<yellow>Click to open rewards menu'><green>Hey <player_name>, you have available <rewards_availables> rewards</click>"
     NoAvailable: "&cOh no, no rewards availables"
   PlaceholderAPI:
     # Placeholder > %oreward_available_[name]%
