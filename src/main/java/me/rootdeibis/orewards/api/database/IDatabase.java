@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class IDatabase {
 
@@ -20,10 +22,14 @@ public abstract class IDatabase {
 
     private final String UPDATE_ROW = "UPDATE %s SET until = '%s' WHERE UUID = '%s';";
     private boolean tested = false;
+
+    private final Lock lock = new ReentrantLock();
+
     protected abstract Connection createConnection() throws Exception;
 
 
     private boolean execute(String query, Object... values) {
+        lock.lock();
         boolean result = false;
 
         try {
@@ -41,6 +47,8 @@ public abstract class IDatabase {
 
         }catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
         return result;
@@ -48,7 +56,7 @@ public abstract class IDatabase {
 
 
     public void checkTables(String... tables) {
-
+        lock.lock();
 
         try {
             Connection conn = this.createConnection();
@@ -65,6 +73,8 @@ public abstract class IDatabase {
 
         }catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
 
@@ -81,6 +91,8 @@ public abstract class IDatabase {
     }
     public long get(Reward reward, UUID uuid) {
         long until = 0;
+
+        lock.lock();
 
         try {
             Connection connection = this.createConnection();
@@ -99,6 +111,8 @@ public abstract class IDatabase {
 
         }catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
         return until;

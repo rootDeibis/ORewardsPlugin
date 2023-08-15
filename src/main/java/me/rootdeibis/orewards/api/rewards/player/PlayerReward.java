@@ -3,7 +3,6 @@ package me.rootdeibis.orewards.api.rewards.player;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.utils.DurationParser;
-import org.bukkit.Bukkit;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,9 +26,9 @@ public class PlayerReward {
     }
 
     public void saveUntil(String name) {
-        Bukkit.getScheduler().runTaskAsynchronously(ORewardsMain.getMain(), () -> {
+
             ORewardsMain.getCore().getDatabaseLoader().getDatabase().update(name, this.until_rewards.get(name), this.uuid);
-        });
+
     }
 
     public void resetRewardUntil(String rewardName) {
@@ -48,6 +47,10 @@ public class PlayerReward {
         return ORewardsMain.getCore().getRewardManager().getRewards()
                 .stream().filter(r -> r.getStatus(this.uuid) == Reward.Status.AVAILABLE)
                 .collect(Collectors.toList());
+    }
+
+    public HashMap<String, Long> getUntils() {
+        return until_rewards;
     }
 
     public UUID getUUID() {

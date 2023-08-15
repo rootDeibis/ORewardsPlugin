@@ -29,6 +29,10 @@ public class RewardManager {
         return rewards.stream().filter(r -> r.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
+    public boolean existsReward(String name) {
+        return rewards.stream().anyMatch(e -> e.getName().equals(name));
+    }
+
     public List<Reward> getRewards() {
         return rewards;
     }

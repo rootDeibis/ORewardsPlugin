@@ -40,7 +40,7 @@ public class ORewardsCore {
         RDirectory rewardsDir = fileManager.dir("rewards");
 
         if(!rewardsDir.exists()) {
-            fileManager.dir("rewards")
+            rewardsDir
                     .createIfNoExists();
 
             rewardsDir.exportsDefaults(defaultsRewards);

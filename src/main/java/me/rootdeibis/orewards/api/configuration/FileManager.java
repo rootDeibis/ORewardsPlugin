@@ -63,6 +63,7 @@ public class FileManager {
 
 	public void reload() {
 		this.FilesCache.values().forEach(RFile::reload);
+		this.directoriesCache.values().forEach(RDirectory::loadFilesIndirectory);
 	}
 
 
