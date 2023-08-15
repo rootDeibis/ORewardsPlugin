@@ -2,6 +2,7 @@
 
 Reward system for minecraft servers.
 
+![Previe](https://i.imgur.com/8N8bXER.gif)
 
 ### Features:
 #### Rewards for time, one-time, permissions, and more..
