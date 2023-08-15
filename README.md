@@ -26,8 +26,9 @@ Reward system for minecraft servers.
 - %orewards_availables% - Return how many rewards you have available
 - %orewards_cooldown_[name]% - Returns the countdown format
 #### Commands:
-- /orewards - No require permission
-- /orewards help - orewards.admin.help
-- /orewards list optional:[Category Name] - orewards.admin.list
-- /orewards reset <player|all> <reward_name|all> - orewards.admin.list
-- /orewards reload - orewards.admin.reload
+- /orewards - orewards.command
+- /orewards menu - orewards.cmd.menu
+- /orewards open <category_name> (optional: <player_name>) - orewards.cmd.open
+- /orewards help - orewards.cmd.help
+- /orewards reset <player_name> <reward_name|all> - orewards.cmd.reset
+- /orewards reload - orewards.cmd.reload
