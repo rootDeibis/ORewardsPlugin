@@ -1,6 +1,5 @@
 package me.rootdeibis.orewards.api.rewards.player;
 
-import me.rootdeibis.orewards.ORewardsLogger;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.utils.DurationParser;
@@ -8,7 +7,9 @@ import org.bukkit.Bukkit;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PlayerReward {
 
@@ -42,14 +43,11 @@ public class PlayerReward {
         return this.until_rewards.get(rewardName);
     }
 
-    public int getAvailables() {
-        return until_rewards.keySet().stream()
-                .filter(r -> {
-                    ORewardsLogger.send(r, ORewardsMain.getCore().getRewardManager().getReward(r).getStatus(this.uuid).name());
 
-                    return ORewardsMain.getCore().getRewardManager().getReward(r).getStatus(this.uuid) == Reward.Status.AVAILABLE;
-                })
-                .toArray().length;
+    public List<Reward> getAvailables() {
+        return ORewardsMain.getCore().getRewardManager().getRewards()
+                .stream().filter(r -> r.getStatus(this.uuid) == Reward.Status.AVAILABLE)
+                .collect(Collectors.toList());
     }
 
     public UUID getUUID() {

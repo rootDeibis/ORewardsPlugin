@@ -80,7 +80,9 @@ public class Reward {
         RewardManager rewardManager = ORewardsMain.getCore().getRewardManager();
         PlayerReward playerReward = rewardManager.getPlayerReward(player);
 
-        if(!this.getPermission().equals("none") && !Bukkit.getPlayer(player).hasPermission(this.getPermission())) return Status.PERMISSION;
+        Player p = Bukkit.getPlayer(player);
+
+        if(!this.getPermission().equals("none") && p != null && !p.hasPermission(this.getPermission())) return Status.PERMISSION;
 
         Date currentDate = new Date();
         Date untilDate = new Date(playerReward.getRewardUntil(this.getName()));

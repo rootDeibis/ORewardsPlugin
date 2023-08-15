@@ -6,6 +6,7 @@ import me.rootdeibis.orewards.api.gui.GUIHolder;
 import me.rootdeibis.orewards.api.gui.GuiTaskUpdater;
 import me.rootdeibis.orewards.api.gui.listeners.GUIFactoryListener;
 import me.rootdeibis.orewards.commands.ORewardsCMD;
+import me.rootdeibis.orewards.hook.ORewardsExpansion;
 import me.rootdeibis.orewards.listeners.CheckPlayerListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
@@ -24,6 +25,8 @@ public class ORewardsMain extends JavaPlugin {
     private static BukkitAudiences adventure;
 
     private static BukkitTask guiUpdaterTask;
+
+    public static boolean PLACEHOLDERAPI_SUPPORT = false;
 
 
     public static void resumeTask() {
@@ -47,6 +50,12 @@ public class ORewardsMain extends JavaPlugin {
         this.registerListeners();
 
         CommandLoader.register(ORewardsCMD.class);
+
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            PLACEHOLDERAPI_SUPPORT = true;
+
+            new ORewardsExpansion().register();
+        }
 
 
     }

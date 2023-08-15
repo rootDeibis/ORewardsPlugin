@@ -72,14 +72,19 @@ public class ORewardsSubCmdMenu {
 
 
     @CoreCommand(name = "menu", permission = "orewards.cmd.menu")
-    public void onMenuCommand(CommandSender sender, String[] args) {
+    public boolean onMenuCommand(CommandSender sender, String[] args) {
 
         if(sender instanceof Player) {
             Player player = (Player) sender;
 
             Categories.show(player);
+
+            return true;
         }
 
+        sender.sendMessage(ONLY_PLAYER_MESSAGE);
+
+        return false;
     }
 
 }

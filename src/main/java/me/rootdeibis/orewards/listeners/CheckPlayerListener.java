@@ -28,11 +28,11 @@ public class CheckPlayerListener implements Listener {
                     PlayerReward playerReward = ORewardsMain.getCore().getRewardManager().getPlayerReward(e.getPlayer().getUniqueId());
 
 
-                    int availableRewards = playerReward.getAvailables();
+                    int availableRewards = playerReward.getAvailables().size();
 
                     GUIButton.Placeholders placeholders = new GUIButton.Placeholders();
 
-                    placeholders.add("rewards_availables", playerReward.getAvailables());
+                    placeholders.add("rewards_availables", availableRewards);
                     placeholders.add("player_name", e.getPlayer().getName());
 
 
