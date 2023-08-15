@@ -1,8 +1,10 @@
 package me.rootdeibis.orewards.api.database.type;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.rootdeibis.orewards.ORewardsLogger;
+import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.database.IDatabase;
 
 import java.sql.Connection;
@@ -33,6 +35,14 @@ public class MySQLDB extends IDatabase {
             config.setPassword(password);
             config.setPoolName("HikariMysqlPool");
             config.setMaximumPoolSize(10);
+
+            config.setThreadFactory(
+                    new ThreadFactoryBuilder()
+                            .setNameFormat(ORewardsMain.getMain().getDescription().getName() + " Pool Thread #%1$d")
+                            // Hikari create daemons by default. We could use daemon threads for our own scheduler too
+                            // because we safely shut down
+                            .setDaemon(true)
+                            .build());
 
             config.addDataSourceProperty("cachePrepStmts", true);
             // default prepStmtCacheSize 25 - amount of cached statements

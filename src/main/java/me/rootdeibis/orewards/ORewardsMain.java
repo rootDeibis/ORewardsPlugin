@@ -8,6 +8,7 @@ import me.rootdeibis.orewards.api.gui.listeners.GUIFactoryListener;
 import me.rootdeibis.orewards.commands.ORewardsCMD;
 import me.rootdeibis.orewards.hook.ORewardsExpansion;
 import me.rootdeibis.orewards.listeners.CheckPlayerListener;
+import me.rootdeibis.orewards.utils.VersionChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -55,6 +56,14 @@ public class ORewardsMain extends JavaPlugin {
             PLACEHOLDERAPI_SUPPORT = true;
 
             new ORewardsExpansion().register();
+        }
+
+        VersionChecker versionChecker = new VersionChecker(this, "93216");
+
+        if(versionChecker.isLatestVersion()) {
+            ORewardsLogger.send("&aYou are using the latest version.");
+        } else {
+            ORewardsLogger.send(String.format("&cYou are not using the latest version, consider upgrading. Your current version is %s and the latest version is %s.", this.getDescription().getVersion(), versionChecker.getLatestVersion()));
         }
 
 
