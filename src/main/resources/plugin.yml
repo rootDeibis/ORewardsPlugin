@@ -4,3 +4,5 @@ version: beta-2.0
 api-version: <1.13
 author: "Deibis A - Alias rootDeibis"
 description: "This is a recoded version of the original orewards, With this plugin you can create rewards for your player by time"
+softdepend:
+  - PlaceholderAPI
