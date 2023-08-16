@@ -19,6 +19,7 @@ public class CoreCommandExecutor extends BukkitCommand {
 
         this.setAliases(Arrays.stream(commandContext.getCommand().aliases()).collect(Collectors.toList()));
         this.setPermission(commandContext.getCommand().permission());
+        this.setPermissionMessage("&cInsuficent permissions.");
 
         this.commandContext = commandContext;
 

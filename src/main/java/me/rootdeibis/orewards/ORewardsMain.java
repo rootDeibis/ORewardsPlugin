@@ -1,10 +1,10 @@
 package me.rootdeibis.orewards;
 
+import me.rootdeibis.commonlib.factory.gui.holders.GuiContainer;
+import me.rootdeibis.commonlib.factory.gui.holders.listener.GuiControllerListener;
 import me.rootdeibis.orewards.api.ORewardsCore;
 import me.rootdeibis.orewards.api.commands.CommandLoader;
-import me.rootdeibis.orewards.api.gui.GUIHolder;
-import me.rootdeibis.orewards.api.gui.GuiTaskUpdater;
-import me.rootdeibis.orewards.api.gui.listeners.GUIFactoryListener;
+import me.rootdeibis.orewards.api.rewards.menus.GuiTaskUpdater;
 import me.rootdeibis.orewards.commands.ORewardsCMD;
 import me.rootdeibis.orewards.hook.ORewardsExpansion;
 import me.rootdeibis.orewards.listeners.CheckPlayerListener;
@@ -14,8 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.stream.Collectors;
 
 public class ORewardsMain extends JavaPlugin {
 
@@ -31,7 +29,9 @@ public class ORewardsMain extends JavaPlugin {
 
 
     public static void resumeTask() {
-        guiUpdaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(ORewardsMain.getMain(), new GuiTaskUpdater(), 0L, 20L);
+        if(guiUpdaterTask == null || Bukkit.getScheduler().isCurrentlyRunning(guiUpdaterTask.getTaskId())) {
+            guiUpdaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(ORewardsMain.getMain(), new GuiTaskUpdater(), 0L, 20L);
+        }
     }
 
     public static void stopTask() {
@@ -58,13 +58,31 @@ public class ORewardsMain extends JavaPlugin {
             new ORewardsExpansion().register();
         }
 
-        VersionChecker versionChecker = new VersionChecker(this, "93216");
 
-        if(versionChecker.isLatestVersion()) {
-            ORewardsLogger.send("&aYou are using the latest version.");
-        } else {
-            ORewardsLogger.send(String.format("&cYou are not using the latest version, consider upgrading. Your current version is %s and the latest version is %s.", this.getDescription().getVersion(), versionChecker.getLatestVersion()));
-        }
+
+        ORewardsLogger.print(
+                "&6 ██████╗ ██████╗ ███████╗██╗    ██╗ █████╗ ██████╗ ██████╗ ███████╗",
+                "&6██╔═══██╗██╔══██╗██╔════╝██║    ██║██╔══██╗██╔══██╗██╔══██╗██╔════╝",
+                "&6██║   ██║██████╔╝█████╗  ██║ █╗ ██║███████║██████╔╝██║  ██║███████╗",
+                "&6██║   ██║██╔══██╗██╔══╝  ██║███╗██║██╔══██║██╔══██╗██║  ██║╚════██║",
+                "&6╚██████╔╝██║  ██║███████╗╚███╔███╔╝██║  ██║██║  ██║██████╔╝███████║",
+                "&6 ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝",
+                        "",
+                        "&dCurrent version:" + this.getDescription().getVersion(),"",
+                        "&bSupport in: https://discord.gg/rxvsppR2ss"
+        );
+
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            VersionChecker versionChecker = new VersionChecker(this, "93216");
+
+            if(versionChecker.isLatestVersion()) {
+                ORewardsLogger.send("&aYou are using the latest version.");
+            } else {
+                ORewardsLogger.send(String.format("&cYou are not using the latest version, consider upgrading. Your current version is %s and the latest version is %s.", this.getDescription().getVersion(), versionChecker.getLatestVersion()));
+            }
+        });
+
+
 
 
     }
@@ -79,7 +97,7 @@ public class ORewardsMain extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new GUIFactoryListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GuiControllerListener(), this);
         Bukkit.getPluginManager().registerEvents(new CheckPlayerListener(), this);
     }
 
@@ -90,10 +108,7 @@ public class ORewardsMain extends JavaPlugin {
 
         oRewardsCore.getDatabaseLoader().getDatabase().disconnect();
 
-        GUIHolder.getOpenedHolders().stream()
-                .filter(e -> e.getInventory() != null && e.getInventory().getViewers().size() > 0)
-                .collect(Collectors.toSet())
-                .forEach(g -> g.getInventory().clear());
+        GuiContainer.getContainers().forEach(GuiContainer::removeContainer);
     }
 
     public static BukkitAudiences getAdventure() {

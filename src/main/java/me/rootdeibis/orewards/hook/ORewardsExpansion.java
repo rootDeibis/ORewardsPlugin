@@ -3,12 +3,12 @@ package me.rootdeibis.orewards.hook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
-import me.rootdeibis.orewards.api.gui.GUIButton;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.api.rewards.RewardManager;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.DurationParser;
+import me.rootdeibis.orewards.utils.Placeholders;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class ORewardsExpansion extends PlaceholderExpansion {
         RFile config = ORewardsMain.getCore().getFileManager().use("config.yml");
         String placeholdersPath = "Messages.PlaceholderAPI.getRewardIsAvailable.";
 
-        GUIButton.Placeholders placeholders = new GUIButton.Placeholders();
+        Placeholders placeholders = new Placeholders();
 
         if(params.contains("available_")) {
 

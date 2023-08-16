@@ -1,10 +1,10 @@
 package me.rootdeibis.orewards.api.database;
 
+import me.rootdeibis.commonlib.database.MySQLDatabase;
+import me.rootdeibis.commonlib.database.SQLiteDatabase;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.ORewardsCore;
 import me.rootdeibis.orewards.api.configuration.RFile;
-import me.rootdeibis.orewards.api.database.type.MySQLDB;
-import me.rootdeibis.orewards.api.database.type.SQLFileDB;
 import me.rootdeibis.orewards.api.rewards.Reward;
 
 import java.io.File;
@@ -26,9 +26,11 @@ public class DatabaseLoader {
         this.database = isMySQL ? this.prepareDatabaseMySQL() : this.prepareDatabaseSQLite();
 
 
-        if(this.database.isTested()) {
+
+        if (this.database.isTested()) {
             this.database.checkTables(this.core.getRewardManager().getRewards().stream().map(Reward::getName).toArray(String[]::new));
         }
+
     }
 
 
@@ -41,7 +43,7 @@ public class DatabaseLoader {
         String password = config.getString("Options.MysqlConnection.Data.password");
         String db_name = config.getString("Options.MysqlConnection.Data.databaseName");
 
-        return new MySQLDB(db_name, username, password, host, port);
+        return new IDatabase(new MySQLDatabase("mysql", host, port, db_name, username, password));
     }
 
     private IDatabase prepareDatabaseSQLite() {
@@ -50,7 +52,7 @@ public class DatabaseLoader {
 
         File dbFile = new File(ORewardsMain.getMain().getDataFolder(), fileName);
 
-        return new SQLFileDB(dbFile);
+        return new IDatabase(new SQLiteDatabase(dbFile));
     }
 
     public IDatabase getDatabase() {

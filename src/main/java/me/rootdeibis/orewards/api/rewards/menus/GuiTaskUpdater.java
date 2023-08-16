@@ -1,6 +1,7 @@
-package me.rootdeibis.orewards.api.gui;
+package me.rootdeibis.orewards.api.rewards.menus;
 
 
+import me.rootdeibis.commonlib.factory.gui.holders.GuiContainer;
 import me.rootdeibis.orewards.ORewardsMain;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class GuiTaskUpdater implements Runnable {
 
     @Override
     public void run() {
-        List<GUIHolder> holders = GUIHolder.getOpenedHolders();
+        List<GuiContainer> holders = GuiContainer.getContainers();
 
 
         if(holders.size() == 0) {
@@ -24,7 +25,8 @@ public class GuiTaskUpdater implements Runnable {
         }
 
 
-        holders.forEach(GUIHolder::build);
+        holders
+                .forEach(container -> container.getButtons().forEach(container::updateButton));
 
     }
 }

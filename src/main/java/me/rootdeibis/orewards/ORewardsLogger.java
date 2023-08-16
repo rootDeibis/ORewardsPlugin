@@ -13,4 +13,9 @@ public class ORewardsLogger {
             Arrays.stream(messages).forEach(str -> Bukkit.getConsoleSender().sendMessage(AdvetureUtils.translate(prefix + str)));
         }
 
+        public static void print(String... messages) {
+            Arrays.stream(messages).forEach(str -> Bukkit.getConsoleSender().sendMessage(AdvetureUtils.translate(str)));
+
+        }
+
 }

@@ -43,7 +43,6 @@ public class RFile extends YamlConfiguration {
 				this.fileManager.getResourcesPath() != null ? this.fileManager.getResourcesPath() + this.defaultFilePath : defaultFilePath
 				);
 		
-		System.out.println(this.fileManager.getResourcesPath() != null ? this.fileManager.getResourcesPath() + this.path : path);
 
 		byte[] buffer = new byte[1024];
 		int length;

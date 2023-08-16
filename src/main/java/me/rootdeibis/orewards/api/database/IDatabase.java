@@ -1,5 +1,6 @@
 package me.rootdeibis.orewards.api.database;
 
+import me.rootdeibis.commonlib.database.SQLDatabase;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.utils.DurationParser;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class IDatabase {
+public class IDatabase {
 
 
     private final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS %s ( UUID TEXT, until varchar(40), server TEXT);";
@@ -25,7 +26,23 @@ public abstract class IDatabase {
 
     private final Lock lock = new ReentrantLock();
 
-    protected abstract Connection createConnection() throws Exception;
+
+    private final SQLDatabase database;
+
+    public IDatabase(SQLDatabase database) {
+        this.database = database;
+
+        try {
+
+            Connection connection = this.database.getConnection();
+            connection.close();
+
+            this.tested = true;
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private boolean execute(String query, Object... values) {
@@ -33,7 +50,7 @@ public abstract class IDatabase {
         boolean result = false;
 
         try {
-            Connection conn = this.createConnection();
+            Connection conn = this.database.getConnection();
             Statement statement = conn.createStatement();
 
 
@@ -59,7 +76,7 @@ public abstract class IDatabase {
         lock.lock();
 
         try {
-            Connection conn = this.createConnection();
+            Connection conn = this.database.getConnection();
             Statement statement = conn.createStatement();
 
 
@@ -95,7 +112,7 @@ public abstract class IDatabase {
         lock.lock();
 
         try {
-            Connection connection = this.createConnection();
+            Connection connection = this.database.getConnection();
             PreparedStatement statement = connection.prepareStatement(String.format(SELECT_UNTIL, reward.getName(), uuid.toString()));
 
             statement.execute();
@@ -127,5 +144,9 @@ public abstract class IDatabase {
     }
 
 
-    public abstract void disconnect();
+    public void disconnect() {
+        if (!this.database.getDataSource().isClosed()) {
+            this.database.getDataSource().close();
+        }
+    }
 }

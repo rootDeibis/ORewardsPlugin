@@ -22,6 +22,12 @@ Options:
       databaseName: "player_rewards"
   SQLConnection:
     FileName: "ORewardsSQLData.db"
+rewardGuiOptions:
+  # [close-on-claim]  If a player claims the reward the menu will close automatically.
+  close-on-claim: true
+  # [disable-live-cooldown]
+  # This option will prevent the cooldown of a reward from being updated once it changes, if you have performance problems enable this option.
+  disable-live-cooldown: false
 Messages:
   WelcomeRewardAvailable:
     Delay: 2 # Seconds

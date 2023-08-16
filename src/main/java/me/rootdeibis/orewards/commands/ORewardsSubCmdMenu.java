@@ -1,8 +1,7 @@
 package me.rootdeibis.orewards.commands;
 
 import me.rootdeibis.orewards.api.commands.annotations.CoreCommand;
-import me.rootdeibis.orewards.api.rewards.menus.Categories;
-import me.rootdeibis.orewards.api.rewards.menus.CategoryMenu;
+import me.rootdeibis.orewards.api.rewards.menus.categories.CategoriesContainer;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -25,7 +24,8 @@ public class ORewardsSubCmdMenu {
 
                 Player player = (Player) sender;
 
-                Categories.show(player);
+                CategoriesContainer container = new CategoriesContainer();
+                container.show(player);
 
                 return true;
 
@@ -42,9 +42,11 @@ public class ORewardsSubCmdMenu {
 
                 String categoryName = args[0];
 
-                if(!CategoryMenu.show(categoryName, player)) {
+
+
+                /*if(!CategoryMenu.show(categoryName, player)) {
                     sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
-                }
+                }*/
 
 
             } else {
@@ -58,9 +60,9 @@ public class ORewardsSubCmdMenu {
             if(player != null) {
                 String categoryName = args[0];
 
-                if(!CategoryMenu.show(categoryName, player)) {
+                /*if(!CategoryMenu.show(categoryName, player)) {
                     sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
-                }
+                }*/
             } else {
                 sender.sendMessage(String.format(PLAYER_OFFLINE_MESSAGE, args[1]));
             }
@@ -77,7 +79,11 @@ public class ORewardsSubCmdMenu {
         if(sender instanceof Player) {
             Player player = (Player) sender;
 
-            Categories.show(player);
+
+            CategoriesContainer container = new CategoriesContainer();
+            container.show(player);
+
+
 
             return true;
         }
