@@ -4,16 +4,13 @@ import me.rootdeibis.orewards.ORewardsLogger;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.database.IDatabase;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
-import me.rootdeibis.orewards.utils.DurationParser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RewardManager {
 
     private final List<Reward> rewards = new ArrayList<>();
-    private final List<PlayerReward> playerRewards = new ArrayList<>();
+    private final HashMap<UUID,PlayerReward> playerRewards = new HashMap<>();
 
     public RewardManager() {
     }
@@ -41,23 +38,30 @@ public class RewardManager {
 
 
     public PlayerReward getPlayerReward(UUID player) {
-        if(playerRewards.stream().noneMatch(p -> p.getUUID().equals(player))) {
-            playerRewards.add(new PlayerReward(player));
+        if(!playerRewards.containsKey(player)) {
+            playerRewards.put(player,new PlayerReward(player));
         }
 
-        return playerRewards.stream().filter(p -> p.getUUID().equals(player)).findFirst().orElse(null);
+        return playerRewards.get(player);
     }
 
 
+    public Set<String> getCategories() {
+        return  ORewardsMain.getCore().getFileManager().use("categories.yml").getConfigurationSection("CategoryList").getKeys(false);
+    }
+
     public boolean checkPlayer(UUID uuid) {
+
+        if(playerRewards.containsKey(uuid)) return true;
+
         IDatabase db = ORewardsMain.getCore().getDatabaseLoader().getDatabase();
 
         if(!db.isTested()) return false;
-        if(playerRewards.stream().anyMatch(r -> r.getUUID().equals(uuid))) return true;
+
 
         boolean result =  false;
 
-        PlayerReward rewardsCache = this.getPlayerReward(uuid);
+        PlayerReward rewardsCache = new PlayerReward(uuid);
 
         for (Reward reward : ORewardsMain.getCore().getRewardManager().getRewards()) {
 
@@ -70,7 +74,7 @@ public class RewardManager {
 
                 if(db.create(reward, uuid)) {
                     result = true;
-                    until = DurationParser.addToDate("1s").getTime();
+                    until = new Date().getTime();
                 } else {
                     ORewardsLogger.send("Failed to create row in " + reward.getName() + " where uuid(" + uuid + ")");
                 }
@@ -83,7 +87,7 @@ public class RewardManager {
         }
 
 
-
+        playerRewards.put(uuid,rewardsCache);
 
         return result;
     }

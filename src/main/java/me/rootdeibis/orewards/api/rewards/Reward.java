@@ -1,6 +1,6 @@
 package me.rootdeibis.orewards.api.rewards;
 
-import com.cryptomorin.xseries.XSound;
+import me.rootdeibis.commonlib.utils.XSound;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;

@@ -19,7 +19,7 @@ public class CoreCommandExecutor extends BukkitCommand {
 
         this.setAliases(Arrays.stream(commandContext.getCommand().aliases()).collect(Collectors.toList()));
         this.setPermission(commandContext.getCommand().permission());
-        this.setPermissionMessage("&cInsuficent permissions.");
+        this.setPermissionMessage("&cInsufficient permissions.");
 
         this.commandContext = commandContext;
 
@@ -54,6 +54,7 @@ public class CoreCommandExecutor extends BukkitCommand {
                    if(needPermission.apply(subCommandContext.getSubCommand().permission())) {
                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.getPermissionMessage()));
                    } else {
+
 
 
                        return MethodUtils.invokeMethod(subCommandContext.getInializedClass(),

@@ -1,11 +1,16 @@
 package me.rootdeibis.orewards.commands;
 
+import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.commands.annotations.CoreCommand;
 import me.rootdeibis.orewards.api.rewards.menus.categories.CategoriesContainer;
+import me.rootdeibis.orewards.api.rewards.menus.category.CategoryConfig;
+import me.rootdeibis.orewards.api.rewards.menus.category.RewardCategoryContainer;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Set;
 
 public class ORewardsSubCmdMenu {
 
@@ -18,13 +23,16 @@ public class ORewardsSubCmdMenu {
     public boolean onOpenCommand(CommandSender sender, String[] args) {
         boolean isPlayer = sender instanceof Player;
 
+
+        Set<String> categories = ORewardsMain.getCore().getRewardManager().getCategories();
+
         if (args.length == 0) {
 
             if (isPlayer) {
 
                 Player player = (Player) sender;
 
-                CategoriesContainer container = new CategoriesContainer();
+                CategoriesContainer container = new CategoriesContainer(player);
                 container.show(player);
 
                 return true;
@@ -41,6 +49,20 @@ public class ORewardsSubCmdMenu {
                 Player player = (Player) sender;
 
                 String categoryName = args[0];
+
+                if (categories.stream().anyMatch(categoryName::equals)) {
+
+                    CategoryConfig categoryConfig = CategoryConfig.loadFromName(categoryName);
+                    RewardCategoryContainer container = new RewardCategoryContainer(categoryConfig, player);
+
+                    container.show(player);
+
+                } else {
+
+                    sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
+
+                }
+
 
 
 
@@ -60,9 +82,18 @@ public class ORewardsSubCmdMenu {
             if(player != null) {
                 String categoryName = args[0];
 
-                /*if(!CategoryMenu.show(categoryName, player)) {
+                if (categories.stream().anyMatch(categoryName::equals)) {
+
+                    CategoryConfig categoryConfig = CategoryConfig.loadFromName(categoryName);
+                    RewardCategoryContainer container = new RewardCategoryContainer(categoryConfig, player);
+
+                    container.show(player);
+
+                } else {
+
                     sender.sendMessage(String.format(CATEGORY_UNKNOWN_MESSAGE, categoryName));
-                }*/
+
+                }
             } else {
                 sender.sendMessage(String.format(PLAYER_OFFLINE_MESSAGE, args[1]));
             }
@@ -80,7 +111,7 @@ public class ORewardsSubCmdMenu {
             Player player = (Player) sender;
 
 
-            CategoriesContainer container = new CategoriesContainer();
+            CategoriesContainer container = new CategoriesContainer(player);
             container.show(player);
 
 

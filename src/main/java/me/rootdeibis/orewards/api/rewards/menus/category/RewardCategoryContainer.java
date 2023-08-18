@@ -21,10 +21,11 @@ public class RewardCategoryContainer extends GuiContainer {
     public RewardCategoryContainer(CategoryConfig categoryConfig, Player player) {
         this.categoryConfig = categoryConfig;
         this.player = player;
-        this.rewards = ORewardsMain.getCore().getRewardManager().getRewards().stream().filter(r -> categoryConfig.getRewardsNames().contains(r.getName())).collect(Collectors.toList());
+        this.rewards = ORewardsMain.getCore().getRewardManager().getRewards().stream().filter(r -> categoryConfig.getRewardsNames().contains(r.getName()) && !r.displayInCategories()).collect(Collectors.toList());
 
 
         ORewardsMain.getCore().getRewardManager().checkPlayer(player.getUniqueId());
+
 
         this.load();
 
@@ -39,6 +40,8 @@ public class RewardCategoryContainer extends GuiContainer {
     public int getSize() {
         return this.categoryConfig.getGUIRows();
     }
+
+
 
     private void load() {
 
@@ -56,9 +59,16 @@ public class RewardCategoryContainer extends GuiContainer {
 
             placeholders.add("reward_cooldown", () -> DurationParser.format(playerReward.getRewardUntil(reward.getName())));
 
-            this.addButton(new RewardButton(playerReward, reward, placeholders));
+            this.addButton(reward.getDisplaySlot(),new RewardButton(playerReward, reward, placeholders));
 
         }
 
+    }
+
+    @Override
+    public void show(Player player) {
+        super.show(player);
+
+        ORewardsMain.resumeTask();
     }
 }

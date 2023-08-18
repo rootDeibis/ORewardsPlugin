@@ -1,18 +1,19 @@
 package me.rootdeibis.orewards.api.rewards.menus.categories;
 
-import com.cryptomorin.xseries.XMaterial;
-import me.rootdeibis.commonlib.factory.gui.holders.GuiButton;
-import me.rootdeibis.commonlib.factory.gui.holders.context.GUIClickContext;
+
+import me.rootdeibis.commonlib.factory.gui.button.GuiButton;
+import me.rootdeibis.commonlib.factory.gui.button.GuiButtonData;
+import me.rootdeibis.commonlib.factory.gui.context.GUIClickContext;
+import me.rootdeibis.commonlib.utils.XMaterial;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.rewards.menus.category.CategoryConfig;
 import me.rootdeibis.orewards.api.rewards.menus.category.RewardCategoryContainer;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
-import org.bukkit.Material;
+import me.rootdeibis.orewards.utils.HeadTool;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 class CategoryButton extends GuiButton {
 
@@ -20,53 +21,41 @@ class CategoryButton extends GuiButton {
     private final String path;
     private final RFile config = ORewardsMain.getCore().getFileManager().use("categories.yml");
 
-    public int slot;
+    private final GuiButtonData<ItemStack> data = new GuiButtonData<>();
 
-
-    private boolean useCustomSlot = false;
 
     public CategoryButton(String name) {
         this.name = name;
         this.path = "CategoryList." + name + ".DisplayItem.";
     }
 
-    public CategoryButton(String name, int slot) {
-        this.name = name;
-        this.path = "CategoryList." + name + ".DisplayItem.";
-        this.slot = slot;
-        this.useCustomSlot = true;
-    }
 
     @Override
-    public int getSlot() {
-        return useCustomSlot ? this.slot : config.getInt(this.path + "slot");
-    }
+    public GuiButtonData<ItemStack> getData() {
 
-    @Override
-    public void resolveItemStack() {
         ItemStack itemStack = XMaterial.matchXMaterial(config.getString(this.path + "material")).orElse(XMaterial.BEDROCK).parseItem();
-        this.setItemStack(itemStack);
+
+
+        this.data.setMaterial(itemStack);
+
+        this.data.setDisplayName(AdvetureUtils.translate(config.getString(this.path + "displayname")));
+
+        this.data.setLore(AdvetureUtils.translate(config.getStringList(this.path + "lore")));
+        this.data.setAmount(1);
+
+        String identifier = config.getString( this.path + "textures");
+        if (this.data.getTextures() == null && identifier!= null) {
+            Bukkit.getScheduler().runTaskAsynchronously(ORewardsMain.getMain(), () -> {
+
+                HeadTool.loadTextures(identifier);
+                this.data.setTextures(HeadTool.getSkullMetaCache().get(identifier));
+            });
+        }
+
+
+        return this.data;
     }
 
-    @Override
-    public Material getMaterial() {
-        return XMaterial.matchXMaterial(config.getString(this.path + "material")).orElse(XMaterial.BEDROCK).parseMaterial();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return AdvetureUtils.translate(config.getString(this.path + "displayname"));
-    }
-
-    @Override
-    public List<String> getLore() {
-        return AdvetureUtils.translate(config.getStringList(this.path + "lore"));
-    }
-
-    @Override
-    public int getAmount() {
-        return 1;
-    }
 
     @Override
     public void onClick(GUIClickContext context) {
@@ -80,7 +69,6 @@ class CategoryButton extends GuiButton {
 
 
         container.show(player);
-
-    }
+            }
 
 }

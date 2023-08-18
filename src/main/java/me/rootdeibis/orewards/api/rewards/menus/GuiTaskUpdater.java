@@ -20,13 +20,16 @@ public class GuiTaskUpdater implements Runnable {
         List<GuiContainer> holders = GuiContainer.getContainers();
 
 
+
+
         if(holders.size() == 0) {
             ORewardsMain.stopTask();
         }
 
 
-        holders
-                .forEach(container -> container.getButtons().forEach(container::updateButton));
+        holders.stream().filter(container -> container.getInventory() != null && container.getInventory().getViewers().size() > 0).forEach(container -> container.getButtons().forEach((slot, btn) -> {
+            container.updateButton(slot);
+        }));
 
     }
 }
