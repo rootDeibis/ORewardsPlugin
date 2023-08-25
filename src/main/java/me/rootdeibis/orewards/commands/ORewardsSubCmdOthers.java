@@ -27,6 +27,7 @@ public class ORewardsSubCmdOthers {
     public boolean onReloadCommand(CommandSender sender) {
 
         ORewardsMain.getCore().getFileManager().reload();
+        ORewardsMain.getCore().getRewardManager().clearRewardsList();
         ORewardsMain.getCore().getRewardManager().loadRewardsInDirectory();
         sender.sendMessage(AdvetureUtils.translate(RELOAD_MESSAGE));
 

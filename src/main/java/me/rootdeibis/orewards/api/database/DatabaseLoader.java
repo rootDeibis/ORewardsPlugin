@@ -28,6 +28,7 @@ public class DatabaseLoader {
 
 
         if (this.database.isTested()) {
+            this.database.checkTables("player_times");
             this.database.checkTables(this.core.getRewardManager().getRewards().stream().map(Reward::getName).toArray(String[]::new));
         }
 

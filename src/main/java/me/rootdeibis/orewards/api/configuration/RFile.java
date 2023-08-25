@@ -36,7 +36,12 @@ public class RFile extends YamlConfiguration {
 		
 		return this;
 	}
-	
+
+	@Override
+	public String getString(String path) {
+		return super.getString(path) != null ? super.getString(path) : "";
+	}
+
 	private void useDefaults() {
 		
 		InputStream in = this.fileManager.getClass().getResourceAsStream(

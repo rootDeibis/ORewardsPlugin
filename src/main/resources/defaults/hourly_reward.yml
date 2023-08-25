@@ -6,7 +6,7 @@ RewardOptions:
    # <reward_displayname>
    # Placeholder name
    displayname: 'Hourly Reward'
-   slot: 11
+   slot: 4
    Sounds:
       Available: 'ENTITY_PLAYER_LEVELUP'
       NoAvailable: 'BLOCK_ANVIL_USE'

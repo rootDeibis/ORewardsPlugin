@@ -3,6 +3,8 @@ package me.rootdeibis.orewards.api.rewards.menus.category;
 import me.rootdeibis.commonlib.factory.gui.holders.GuiContainer;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.rewards.Reward;
+import me.rootdeibis.orewards.api.rewards.menus.ActionButton;
+import me.rootdeibis.orewards.api.rewards.menus.categories.CategoryButton;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.DurationParser;
@@ -61,6 +63,23 @@ public class RewardCategoryContainer extends GuiContainer {
 
             this.addButton(reward.getDisplaySlot(),new RewardButton(playerReward, reward, placeholders));
 
+        }
+
+        if (this.categoryConfig.getConfig().contains(this.categoryConfig.getPath() + "close-btn-slot")) {
+            this.addButton(this.categoryConfig.getConfig().getInt(this.categoryConfig.getPath() + "close-btn-slot"), ActionButton.of(ActionButton.Type.CLOSE));
+        }
+
+
+        if (this.categoryConfig.getConfig().contains(this.categoryConfig.getPath() + "back-btn-slot")) {
+            this.addButton(this.categoryConfig.getConfig().getInt(this.categoryConfig.getPath() + "back-btn-slot"), ActionButton.of(ActionButton.Type.BACK_TO_MAIN));
+        }
+
+        if (this.categoryConfig.hasDecoration()) {
+            this.categoryConfig.getDecorationSection().getIntegerList("slot").forEach(e -> {
+
+                this.addButton(e, new CategoryButton("CategoryList." + this.categoryConfig.getName() + ".decoration.DisplayItem.", "decoration"));
+
+            });
         }
 
     }

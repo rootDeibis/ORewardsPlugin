@@ -5,10 +5,14 @@ import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
+import me.rootdeibis.orewards.utils.DurationParser;
+import me.rootdeibis.orewards.utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -17,6 +21,7 @@ public class Reward {
     private final String CMD_IDENTIFICATOR = "cmd:";
     private final String MSG_IDENTIFICATOR = "msg:";
     private final String MINIMSG_IDENTIFICATOR = "minimsg:";
+
 
 
 
@@ -37,12 +42,23 @@ public class Reward {
             return status;
         }
     }
+
+
+    public enum Type {
+        ONE_TIME,
+        DAY_OF_WEEK,
+        TIMED,
+        PLAY_TIME
+    }
+
     private final String name;
     private final RFile rewardConfig;
 
     public Reward(String name) {
         this.name = name;
         this.rewardConfig = ORewardsMain.getCore().getFileManager().dir("rewards").use(name + ".yml");
+
+
     }
 
     public String getName() {
@@ -57,6 +73,35 @@ public class Reward {
         String time = this.rewardConfig.getString("RewardOptions.time");
 
         return time != null ? time : "99999mo";
+    }
+
+    public Type getType() {
+        if (EnumUtils.searchEnum(DayOfWeek.class, this.getTime()) != null) return Type.DAY_OF_WEEK;
+
+        if (this.getTime().toLowerCase().startsWith("play-time:")) return Type.PLAY_TIME;
+
+        if (this.getTime().equalsIgnoreCase("99999mo")) return Type.ONE_TIME;
+
+        return Type.TIMED;
+
+    }
+    public long resolveTime() {
+        Type type = this.getType();
+        long until = DurationParser.addToDate("1h").getTime();
+
+
+
+        if (type == Type.DAY_OF_WEEK) {
+           until = DurationParser.nextDayOfweek(this.getTime());
+
+        } else if (type == Type.ONE_TIME || type == Type.PLAY_TIME) {
+            until = DurationParser.addToDate("999999999mo").getTime();
+        } else if (type == Type.TIMED) {
+            until = DurationParser.addToDate(this.getTime()).getTime();
+        }
+
+        return until;
+
     }
 
     public boolean displayInCategories() {
@@ -80,14 +125,33 @@ public class Reward {
         RewardManager rewardManager = ORewardsMain.getCore().getRewardManager();
         PlayerReward playerReward = rewardManager.getPlayerReward(player);
 
+
         Player p = Bukkit.getPlayer(player);
 
         if(!this.getPermission().equals("none") && p != null && !p.hasPermission(this.getPermission())) return Status.PERMISSION;
 
+
+
+        Type type = this.getType();
+
         Date currentDate = new Date();
         Date untilDate = new Date(playerReward.getRewardUntil(this.getName()));
 
-        if(currentDate.after(untilDate)) return Status.AVAILABLE;
+
+        if (type == Type.TIMED || type == Type.ONE_TIME) {
+            if (currentDate.after(untilDate)) return Status.AVAILABLE;
+        } else if(type == Type.DAY_OF_WEEK) {
+            DayOfWeek dayOfWeek = EnumUtils.searchEnum(DayOfWeek.class, this.getTime());
+
+
+
+            if (LocalDate.now().getDayOfWeek() == dayOfWeek && currentDate.after(untilDate)) return Status.AVAILABLE;
+
+        } else if(type == Type.PLAY_TIME) {
+
+            /* SOON */
+
+        }
 
         return Status.NO_AVAILABLE;
 

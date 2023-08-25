@@ -2,7 +2,6 @@ package me.rootdeibis.orewards.api.rewards.player;
 
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.rewards.Reward;
-import me.rootdeibis.orewards.utils.DurationParser;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -21,10 +20,19 @@ public class PlayerReward {
     }
 
 
-    public void setRewardUntil(String rewardName, long timeUntil) {
-        this.until_rewards.put(rewardName, timeUntil);
+    public void setUntilInTime(String name) {
+        Reward reward = ORewardsMain.getCore().getRewardManager().getReward(name);
+
+        if (reward != null) {
+
+            this.until_rewards.put(name, reward.resolveTime());
+
+        }
     }
 
+    public void setUntil(String name, long u) {
+        this.until_rewards.put(name, u);
+    }
     public void saveUntil(String name) {
 
             ORewardsMain.getCore().getDatabaseLoader().getDatabase().update(name, this.until_rewards.get(name), this.uuid);
@@ -32,7 +40,7 @@ public class PlayerReward {
     }
 
     public void resetRewardUntil(String rewardName) {
-        this.until_rewards.put(rewardName, DurationParser.addToDate("1s").getTime());
+        this.until_rewards.put(rewardName, new Date().getTime());
     }
 
     public long getRewardUntil(String rewardName) {

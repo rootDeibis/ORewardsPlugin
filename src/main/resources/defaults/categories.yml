@@ -1,10 +1,29 @@
 CategoryGUIOptions:
   GUITitle: "&8ORewards  Main menu"
   rows: 5
+  close-btn-slot: 4
+  decoration:
+    DisplayItem:
+      slot: [ 0, 1, 2, 3  ,5 ,6, 7, 8, 36,37, 38, 39, 41 ,42, 43, 44 ]
+      material: "BLACK_STAINED_GLASS_PANE"
+      displayname: " "
+action_buttons:
+  close:
+    material: "BARRIER"
+    displayname: "&cClick here to close"
+  back:
+    material: "ARROW"
+    displayname: "&eBack to main"
 CategoryList:
   DefaultRewards:
     GUITitle: "&8ORewards  Global Rewards"
     rows: 3
+    back-btn-slot: 18
+    close-btn-slot: 26
+    decoration:
+      DisplayItem:
+        slot: [ 0,1,2,3,5,6,7,8,9,10,11,15,16,17,19,20,21,22,23,24,25 ]
+        material: "BLACK_STAINED_GLASS_PANE"
     rewards:
       - "hourly_reward"
       - "daily_reward"
@@ -15,14 +34,20 @@ CategoryList:
       material: "CHEST"
       displayname: "&aGlobal Rewards"
       lore:
-        - '&8Reward for all players'
-        - ''
-        - '&7To claim these rewards you need at least User rank.'
-        - ''
-        - '&a Click to open'
+        - "&8Reward for all players"
+        - ""
+        - "&7To claim these rewards you need at least User rank."
+        - ""
+        - "&a Click to open"
   VipRewards:
     GUITitle: "&8ORewards  VIP Rewards"
     rows: 3
+    back-btn-slot: 18
+    close-btn-slot: 26
+    decoration:
+      DisplayItem:
+        slot: [ 0,1,2,3,4,5,6,7,8,9,10,11,12,14,15,16,17,19,20,21,22,23,24,25 ]
+        material: "BLACK_STAINED_GLASS_PANE"
     rewards:
       - "vip_reward"
     DisplayItem:
@@ -30,14 +55,9 @@ CategoryList:
       material: "CHEST"
       displayname: "&aVIP Rewards"
       lore:
-        - '&8Reward for VIP players'
-        - ''
-        - '&7To claim these rewards you need at least VIP rank,'
-        - '&7you can get it at play.example.net.'
-        - ''
-        - '&a Click to open'
-  decoration:
-    DisplayItem:
-      slot: [0, 1, 2, 3 ,4 ,5 ,6, 7, 8, 36, 37, 38, 39, 41 ,42, 43, 44]
-      material: "BLACK_STAINED_GLASS_PANE"
-      displayname: " "
+        - "&8Reward for VIP players"
+        - ""
+        - "&7To claim these rewards you need at least VIP rank,"
+        - "&7you can get it at play.example.net."
+        - ""
+        - "&a Click to open"

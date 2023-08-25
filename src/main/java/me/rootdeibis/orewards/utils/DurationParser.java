@@ -44,6 +44,21 @@ public class DurationParser {
         return addToDate(formatDateValues(format));
     }
 
+    public static Date addDateToDate(Date date, String format) {
+        int[] values = formatDateValues(format);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        if (values[0] != 0) calendar.add(Calendar.MONTH, values[0]);
+        if (values[1] != 0) calendar.add(Calendar.DAY_OF_MONTH, values[1]);
+        if (values[2] != 0) calendar.add(Calendar.HOUR, values[2]);
+        if (values[3] != 0) calendar.add(Calendar.MINUTE, values[3]);
+        if (values[4] != 0) calendar.add(Calendar.SECOND, values[4]);
+
+        return calendar.getTime();
+    }
+
 
     public static Date addToDate(int... values) {
         Calendar calendar = Calendar.getInstance();

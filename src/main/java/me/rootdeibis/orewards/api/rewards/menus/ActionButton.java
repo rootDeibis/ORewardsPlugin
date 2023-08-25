@@ -1,5 +1,4 @@
-package me.rootdeibis.orewards.api.rewards.menus.categories;
-
+package me.rootdeibis.orewards.api.rewards.menus;
 
 import me.rootdeibis.commonlib.factory.gui.button.GuiButton;
 import me.rootdeibis.commonlib.factory.gui.button.GuiButtonData;
@@ -7,37 +6,36 @@ import me.rootdeibis.commonlib.factory.gui.context.GUIClickContext;
 import me.rootdeibis.commonlib.utils.XMaterial;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
-import me.rootdeibis.orewards.api.rewards.menus.category.CategoryConfig;
-import me.rootdeibis.orewards.api.rewards.menus.category.RewardCategoryContainer;
+import me.rootdeibis.orewards.api.rewards.menus.categories.CategoriesContainer;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.HeadTool;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CategoryButton extends GuiButton {
+public class ActionButton extends GuiButton {
 
-    private final String name;
+
+
+
+    public enum Type {
+        CLOSE,
+        BACK_TO_MAIN
+    }
+
+    private final Type action;
     private final String path;
-    private final RFile config = ORewardsMain.getCore().getFileManager().use("categories.yml");
+    private final RFile config;
 
     private final GuiButtonData<ItemStack> data = new GuiButtonData<>();
 
-
-    public CategoryButton(String name) {
-        this.name = name;
-        this.path = "CategoryList." + name + ".DisplayItem.";
-    }
-
-    public CategoryButton(String path, String name) {
-        this.name = name;
+    public ActionButton(Type action ,String path, RFile config) {
+        this.action = action;
         this.path = path;
+        this.config = config;
     }
-
-
     @Override
-    public GuiButtonData<ItemStack> getData() {
-
+    public GuiButtonData<?> getData() {
         ItemStack itemStack = XMaterial.matchXMaterial(config.getString(this.path + "material")).orElse(XMaterial.BEDROCK).parseItem();
 
 
@@ -58,22 +56,38 @@ public class CategoryButton extends GuiButton {
         }
 
 
-        return this.data;
+        return data;
+    }
+    @Override
+    public void onClick(GUIClickContext context) {
+        Player player = (Player) context.getEvent().getWhoClicked();
+
+        switch (this.action) {
+            case CLOSE:
+                player.getOpenInventory().close();
+                break;
+            case BACK_TO_MAIN:
+                new CategoriesContainer(player).show(player);
+                break;
+        }
+
     }
 
 
-    @Override
-    public void onClick(GUIClickContext context) {
-        if (this.name.equals("decoration")) return;
+    public static GuiButton of(Type type) {
+        RFile rFile = ORewardsMain.getCore().getFileManager().use("categories.yml");
 
-        CategoryConfig categoryConfig = new CategoryConfig(this.name);
+        return type == Type.CLOSE ?
+                new ActionButton(Type.CLOSE, "action_buttons.close.", rFile) :
+                new ActionButton(Type.BACK_TO_MAIN, "action_buttons.back.", rFile);
 
-        Player player = (Player) context.getEvent().getWhoClicked();
-
-        RewardCategoryContainer container = new RewardCategoryContainer(categoryConfig, player);
+    }
 
 
-        container.show(player);
-            }
+
+
+
+
+
 
 }

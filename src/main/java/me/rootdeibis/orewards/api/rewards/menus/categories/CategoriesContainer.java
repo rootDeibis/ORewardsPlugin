@@ -4,6 +4,7 @@ import me.rootdeibis.commonlib.factory.gui.holders.GuiContainer;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.rewards.Reward;
+import me.rootdeibis.orewards.api.rewards.menus.ActionButton;
 import me.rootdeibis.orewards.api.rewards.menus.category.RewardButton;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
@@ -19,6 +20,9 @@ public class CategoriesContainer extends GuiContainer {
     public CategoriesContainer(Player player) {
         this.config = ORewardsMain.getCore().getFileManager().use("categories.yml");
         this.player = player;
+
+        ORewardsMain.getCore().getRewardManager().checkPlayer(player.getUniqueId());
+
         load();
     }
 
@@ -45,8 +49,17 @@ public class CategoriesContainer extends GuiContainer {
                      this.addButton(slot, new CategoryButton(key));
 
                 });
+
+        if (config.contains("CategoryGUIOptions.close-btn-slot")) {
+            this.addButton(config.getInt("CategoryGUIOptions.close-btn-slot"), ActionButton.of(ActionButton.Type.CLOSE));
+        }
+
         
-        config.getIntegerList("CategoryList.decoration.DisplayItem.slot").forEach(slot -> this.addButton(slot,new CategoryButton("decoration")));
+        if(config.contains("CategoryGUIOptions.decoration.DisplayItem.slot")) {
+            config.getIntegerList("CategoryGUIOptions.decoration.DisplayItem.slot").forEach(slot -> this.addButton(slot,new CategoryButton("CategoryGUIOptions.decoration.DisplayItem.","decoration")));
+        } else if (config.contains("CategoryList.decoration.DisplayItem")) {
+            config.getIntegerList("CategoryList.decoration.DisplayItem.slot").forEach(slot -> this.addButton(slot,new CategoryButton("decoration")));
+        }
 
         PlayerReward playerReward = ORewardsMain.getCore().getRewardManager().getPlayerReward(this.player.getUniqueId());
 

@@ -34,6 +34,10 @@ public class ORewardsCore {
                 .create();
 
 
+
+
+
+
         String[] defaultsRewards = new String[]{"daily_reward.yml", "hourly_reward.yml", "monthly_reward.yml", "onetime_reward.yml", "vip_reward.yml", "weekly_reward.yml"};
 
 

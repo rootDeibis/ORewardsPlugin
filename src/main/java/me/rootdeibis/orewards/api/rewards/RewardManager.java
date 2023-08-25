@@ -17,6 +17,8 @@ public class RewardManager {
 
 
     public void loadRewardsInDirectory() {
+
+
         ORewardsMain.getCore().getFileManager().dir("rewards").getRFiles().forEach((name, file) -> {
             rewards.add(new Reward(name.replaceAll(".yml", "")));
 
@@ -24,6 +26,10 @@ public class RewardManager {
     }
     public Reward getReward(String name) {
         return rewards.stream().filter(r -> r.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    public void clearRewardsList() {
+        this.rewards.clear();
     }
 
     public boolean existsReward(String name) {
@@ -49,6 +55,7 @@ public class RewardManager {
     public Set<String> getCategories() {
         return  ORewardsMain.getCore().getFileManager().use("categories.yml").getConfigurationSection("CategoryList").getKeys(false);
     }
+
 
     public boolean checkPlayer(UUID uuid) {
 
@@ -82,7 +89,7 @@ public class RewardManager {
             }
 
 
-            rewardsCache.setRewardUntil(reward.getName(), until);
+            rewardsCache.setUntil(reward.getName(), until);
 
         }
 

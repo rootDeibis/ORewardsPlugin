@@ -23,6 +23,7 @@ Options:
   SQLConnection:
     FileName: "ORewardsSQLData.db"
 rewardGuiOptions:
+  custom-open-command: "rewards"
   # [close-on-claim]  If a player claims the reward the menu will close automatically.
   close-on-claim: true
   # [disable-live-cooldown]

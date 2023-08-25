@@ -1,6 +1,6 @@
 main: me.rootdeibis.orewards.ORewardsMain
 name: orewards
-version: 2.0-pre
+version: 2.1.1-pre
 api-version: "1.13"
 author: "Deibis A - Alias rootDeibis"
 website: "https://discord.gg/rxvsppR2ss"

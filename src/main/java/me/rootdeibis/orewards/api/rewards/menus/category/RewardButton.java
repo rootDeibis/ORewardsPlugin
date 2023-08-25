@@ -9,7 +9,6 @@ import me.rootdeibis.orewards.api.configuration.RFile;
 import me.rootdeibis.orewards.api.rewards.Reward;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
-import me.rootdeibis.orewards.utils.DurationParser;
 import me.rootdeibis.orewards.utils.HeadTool;
 import me.rootdeibis.orewards.utils.Placeholders;
 import org.bukkit.Bukkit;
@@ -56,7 +55,7 @@ public class RewardButton extends GuiButton {
         this.data.setAmount(1);
         String identifier = config.getString( statusPath + "textures");
 
-        if (this.data.getTextures() == null && identifier != null) {
+        if (this.data.getTextures() == null && identifier!= null && identifier.length() > 0) {
             Bukkit.getScheduler().runTaskAsynchronously(ORewardsMain.getMain(), () -> {
 
                 HeadTool.loadTextures(identifier);
@@ -81,7 +80,7 @@ public class RewardButton extends GuiButton {
 
         if(status == Reward.Status.AVAILABLE) {
 
-            playerReward.setRewardUntil(reward.getName(), DurationParser.addToDate(reward.getTime()).getTime());
+            playerReward.setUntilInTime(reward.getName());
 
 
 
