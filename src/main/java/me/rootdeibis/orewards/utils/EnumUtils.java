@@ -11,4 +11,14 @@ public class EnumUtils {
         }
         return null;
     }
+
+    public static <T extends Enum<?>> T mathEnum(Class<T> enumeration, String query) {
+        for (T each : enumeration.getEnumConstants()) {
+            if (each.name().startsWith(query)) {
+                return each;
+            }
+        }
+
+        return null;
+    }
 }

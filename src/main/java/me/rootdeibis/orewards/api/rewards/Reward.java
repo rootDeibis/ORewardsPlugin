@@ -3,12 +3,15 @@ package me.rootdeibis.orewards.api.rewards;
 import me.rootdeibis.commonlib.utils.XSound;
 import me.rootdeibis.orewards.ORewardsMain;
 import me.rootdeibis.orewards.api.configuration.RFile;
+import me.rootdeibis.orewards.api.rewards.data.PlayerData;
+import me.rootdeibis.orewards.api.rewards.data.PlayerDataManager;
 import me.rootdeibis.orewards.api.rewards.player.PlayerReward;
 import me.rootdeibis.orewards.utils.AdvetureUtils;
 import me.rootdeibis.orewards.utils.DurationParser;
 import me.rootdeibis.orewards.utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
 import java.time.DayOfWeek;
@@ -95,7 +98,7 @@ public class Reward {
            until = DurationParser.nextDayOfweek(this.getTime());
 
         } else if (type == Type.ONE_TIME || type == Type.PLAY_TIME) {
-            until = DurationParser.addToDate("999999999mo").getTime();
+            until = 22;
         } else if (type == Type.TIMED) {
             until = DurationParser.addToDate(this.getTime()).getTime();
         }
@@ -134,8 +137,10 @@ public class Reward {
 
         Type type = this.getType();
 
+        long dbUntil = playerReward.getRewardUntil(this.getName());
+
         Date currentDate = new Date();
-        Date untilDate = new Date(playerReward.getRewardUntil(this.getName()));
+        Date untilDate = new Date(dbUntil);
 
 
         if (type == Type.TIMED || type == Type.ONE_TIME) {
@@ -149,7 +154,21 @@ public class Reward {
 
         } else if(type == Type.PLAY_TIME) {
 
-            /* SOON */
+            PlayerData playerData = PlayerDataManager.load(player);
+
+
+            int playTime = p.getStatistic(EnumUtils.mathEnum(Statistic.class, "PLAY_ONE_"));
+
+
+
+
+
+
+
+
+
+
+            if (dbUntil != 22 ) return Status.AVAILABLE;
 
         }
 
